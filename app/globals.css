@@ -2,12 +2,18 @@
 
 @theme {
   /* Bella Vista — coffee-estate palette */
-  --color-ink: #1e2a1d;   /* deep forest bark, base background */
-  --color-mist: #efede4;  /* hill fog, primary text on dark */
-  --color-sage: #7c8b6f;  /* weathered coffee-leaf, muted accents */
-  --color-husk: #c9a05c;  /* dried cherry husk / brass, primary accent */
-  --color-bark: #4a3728;  /* roasted bean brown, surfaces */
-  --color-rust: #9c5a3c;  /* terracotta roof tile, sparing highlight */
+  --color-ink: #1e2a1d;
+  /* deep forest bark, base background */
+  --color-mist: #efede4;
+  /* hill fog, primary text on dark */
+  --color-sage: #7c8b6f;
+  /* weathered coffee-leaf, muted accents */
+  --color-husk: #c9a05c;
+  /* dried cherry husk / brass, primary accent */
+  --color-bark: #4a3728;
+  /* roasted bean brown, surfaces */
+  --color-rust: #9c5a3c;
+  /* terracotta roof tile, sparing highlight */
 
   --font-display: var(--font-fraunces), "Iowan Old Style", serif;
   --font-body: var(--font-inter), system-ui, sans-serif;
@@ -32,4 +38,84 @@ body {
 
 .wheel-ring {
   will-change: transform;
+}
+
+/* ---- Scrollbar: a deep forest-green rail in a bone-white channel ---- */
+:root {
+  --scrollbar-green: color-mix(in srgb, var(--color-sage) 42%, var(--color-ink) 58%);
+  --scrollbar-green-light: color-mix(in srgb, var(--color-sage) 70%, var(--color-ink) 30%);
+  --scrollbar-green-deep: color-mix(in srgb, var(--color-ink) 85%, black);
+}
+
+html {
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-green) var(--color-mist);
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+  height: 0;
+  width: 0;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-mist);
+  box-shadow:
+    inset 0 1px 2px color-mix(in srgb, var(--color-bark) 18%, transparent),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  border: 3px solid var(--color-mist);
+  background-clip: padding-box;
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 28%),
+    linear-gradient(160deg, var(--scrollbar-green-light) 0%, var(--scrollbar-green) 55%, var(--scrollbar-green-deep) 100%);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, black 15%, transparent),
+    0 0 0 0 transparent;
+  transition: box-shadow 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 32%),
+    linear-gradient(160deg, color-mix(in srgb, var(--scrollbar-green-light) 80%, var(--color-husk) 20%) 0%, var(--scrollbar-green) 55%, var(--scrollbar-green-deep) 100%);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, black 15%, transparent),
+    0 0 0 2px color-mix(in srgb, var(--color-husk) 60%, transparent);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-image: linear-gradient(180deg, var(--scrollbar-green-deep), var(--scrollbar-green-deep));
+  box-shadow:
+    inset 0 1px 3px rgba(0, 0, 0, 0.5),
+    0 0 0 2px var(--color-husk);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--color-mist);
+}
+
+/* scoped variant for dark panels/modals sitting on the ink/bark surface —
+   blends the track into the panel instead of leaving a mist-colored gutter
+   cut into it. Add class="scrollbar-on-dark" to any scrollable dark block. */
+.scrollbar-on-dark {
+  scrollbar-color: var(--scrollbar-green-light) transparent;
+}
+
+.scrollbar-on-dark::-webkit-scrollbar-track {
+  background: transparent;
+  box-shadow: none;
+}
+
+.scrollbar-on-dark::-webkit-scrollbar-thumb {
+  border-color: color-mix(in srgb, var(--color-ink) 85%, black);
 }
