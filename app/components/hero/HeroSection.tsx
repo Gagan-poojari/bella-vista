@@ -124,34 +124,32 @@ function HeroCopy({ animated = false }: { animated?: boolean }) {
 
   return (
     <>
-      <p className={`bv-eyebrow${anim(60).className}`} style={anim(60).style}>
-        Bella Vista <span>&middot;</span> Chikkamagaluru
-      </p>
       <h1>
-        <span className={`bv-h1-line${anim(200).className}`} style={anim(200).style}>
+        <span className={`bv-h1-word${anim(80).className}`} style={anim(80).style}>
           Wander Into
-        </span>
+        </span>{" "}
         <span
-          className={`bv-h1-line bv-h1-accent${anim(380).className}`}
-          style={anim(380).style}
+          className={`bv-h1-word bv-h1-accent${anim(260).className}`}
+          style={anim(260).style}
         >
           the Mist
         </span>
       </h1>
-      <p className={`bv-tagline${anim(560).className}`} style={anim(560).style}>
+      <p className={`bv-tagline${anim(440).className}`} style={anim(440).style}>
         Experience the soul of Chikkamagaluru at Bella Vista Homestay. A
         luxury retreat in the heart of coffee country.
       </p>
-      <div className={`bv-offer${anim(740).className}`} style={anim(740).style}>
+      <div className={`bv-offer${anim(620).className}`} style={anim(620).style}>
         <span className="bv-offer-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
-            <path d="M12 2 2 12l10 10 10-10z" />
-            <circle cx="9" cy="9" r="1.3" fill="currentColor" stroke="none" />
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3">
+            <path d="M12 3c3.4 2 5.5 5.1 5.5 8.7 0 4-2.6 7.1-5.5 9.3-2.9-2.2-5.5-5.3-5.5-9.3C6.5 8.1 8.6 5 12 3z" />
+            <path d="M12 6.5V21" />
+            <path d="M12 10.5c-1.6-.3-2.8-1.2-3.5-2.6M12 15c-1.9-.2-3.4-1.3-4.2-3M12 10.5c1.6-.3 2.8-1.2 3.5-2.6M12 15c1.9-.2 3.4-1.3 4.2-3" />
           </svg>
         </span>
         <span className="bv-offer-text">
-          <span className="bv-offer-kicker">Weekday Special</span>
-          <span className="bv-offer-value">10% Off</span>
+          <span className="bv-offer-kicker">Weekday special</span>
+          <span className="bv-offer-value">10% off your stay</span>
         </span>
       </div>
     </>
@@ -162,7 +160,7 @@ function HeroCopy({ animated = false }: { animated?: boolean }) {
 // (reduced-motion) fallback, so the two never drift apart visually.
 const SHARED_STYLES = `
   .bv-bg {
-    position: absolute; inset: 0;
+    position: fixed; inset: 0; z-index: 0;
     background-image: url('/hero-bg.png');
     background-size: cover;
     background-position: center;
@@ -172,28 +170,26 @@ const SHARED_STYLES = `
     position: absolute; inset: 0;
     background: linear-gradient(180deg, rgba(0,0,0,0.62), rgba(0,0,0,0.4) 42%, rgba(0,0,0,0.82));
   }
-  .bv-eyebrow {
-    margin: 0 0 18px; font-family: var(--font-body);
-    font-size: clamp(11px, 1.1vw, 13px); font-weight: 600;
-    letter-spacing: 0.34em; text-transform: uppercase;
-    color: rgba(239,237,228,0.72);
-  }
-  .bv-eyebrow span { color: var(--color-husk); margin: 0 4px; letter-spacing: 0; }
-  .bv-content h1 {
-    display: flex; flex-direction: column; align-items: center;
+  .bv-content h1, .bv-static-content h1 {
     font-family: var(--font-display); font-weight: 600;
-    font-size: clamp(38px, 7vw, 92px); line-height: 1.04;
-    color: var(--color-mist); margin: 0; letter-spacing: -0.01em;
+    font-size: clamp(40px, 6.4vw, 96px); line-height: 1.06;
+    margin: 0; letter-spacing: -0.01em; text-wrap: balance;
   }
-  .bv-h1-line { display: block; text-wrap: balance; }
+  .bv-h1-word {
+    color: var(--color-mist, #f2ede1);
+    text-shadow: 0 2px 28px rgba(0,0,0,0.35);
+  }
   .bv-h1-accent {
-    font-style: italic; color: var(--color-husk);
-    text-shadow: 0 0 54px rgba(201,160,92,0.4), 0 0 12px rgba(201,160,92,0.25);
+    font-style: italic; font-weight: 500;
+    background: linear-gradient(100deg, #ecd39d 0%, #cfa863 45%, #a8793e 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    text-shadow: 0 4px 40px rgba(207,168,99,0.32);
+    letter-spacing: 0.004em;
   }
   .bv-tagline {
-    margin: 24px 0 0; max-width: min(560px, 86vw); font-family: var(--font-body);
-    font-size: clamp(14px, 1.6vw, 18px); line-height: 1.6;
-    color: rgba(239,237,228,0.88); font-weight: 400; text-wrap: balance;
+    margin: 26px 0 0; max-width: 46ch; font-family: var(--font-body);
+    font-size: clamp(14px, 1.5vw, 18px); line-height: 1.6;
+    color: rgba(242,237,225,0.82); font-weight: 400;
   }
 
   /* Staggered "mist clearing" entrance - blur/rise/fade, one time on mount. */
@@ -206,47 +202,62 @@ const SHARED_STYLES = `
     .bv-anim { animation: none; opacity: 1; filter: none; transform: none; }
   }
 
-  /* Offer chip: gradient hairline border (mask trick), soft glass fill, and
-     a slow diagonal shimmer sweep - a proper "premium hotel offer" chip
-     instead of a flat pill. */
+  /* Offer chip: a quiet bordered tag rather than a flashy shimmering pill -
+     static hairline, glass fill, no motion. */
   .bv-offer {
-    position: relative; isolation: isolate; overflow: hidden;
-    margin-top: 32px; display: inline-flex; align-items: center; gap: 14px;
-    padding: 9px 24px 9px 9px; border-radius: 999px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
-    backdrop-filter: blur(8px);
-  }
-  .bv-offer::before {
-    content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
-    background: linear-gradient(120deg, rgba(201,160,92,0.95), rgba(239,213,150,0.35), rgba(201,160,92,0.95));
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor; mask-composite: exclude;
-    pointer-events: none;
-  }
-  .bv-offer::after {
-    content: ""; position: absolute; top: -60%; left: -60%; width: 35%; height: 220%;
-    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
-    transform: rotate(18deg); animation: bv-shimmer 4.2s ease-in-out infinite; pointer-events: none;
-  }
-  @keyframes bv-shimmer { 0% { left: -60%; } 55%, 100% { left: 130%; } }
-  @media (prefers-reduced-motion: reduce) {
-    .bv-offer::after { animation: none; display: none; }
+    position: relative; isolation: isolate;
+    margin-top: 34px; display: inline-flex; align-items: center; gap: 16px;
+    padding: 10px 26px 10px 10px; border-radius: 999px;
+    border: 1px solid rgba(207,168,99,0.4);
+    background: linear-gradient(180deg, rgba(20,26,19,0.55), rgba(20,26,19,0.32));
+    backdrop-filter: blur(10px);
   }
   .bv-offer-icon {
-    width: 36px; height: 36px; flex-shrink: 0; border-radius: 50%;
+    width: 38px; height: 38px; flex-shrink: 0; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    border: 1px solid rgba(201,160,92,0.5); background: rgba(30,42,29,0.55);
-    color: var(--color-husk);
+    border: 1px solid rgba(207,168,99,0.55); background: rgba(20,26,19,0.6);
+    color: var(--color-husk, #cfa863);
   }
-  .bv-offer-icon svg { width: 16px; height: 16px; }
-  .bv-offer-text { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.15; }
+  .bv-offer-icon svg { width: 17px; height: 17px; }
+  .bv-offer-text { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.2; }
   .bv-offer-kicker {
-    font-family: var(--font-body); font-size: 10px; font-weight: 600;
-    letter-spacing: 0.16em; text-transform: uppercase; color: rgba(239,237,228,0.7);
+    font-family: var(--font-body); font-size: 12px; font-weight: 500;
+    letter-spacing: 0.03em; color: rgba(242,237,225,0.72);
   }
   .bv-offer-value {
     font-family: var(--font-display); font-weight: 600; font-style: italic;
-    font-size: clamp(15px, 1.6vw, 18px); color: var(--color-husk); letter-spacing: 0.01em;
+    font-size: clamp(16px, 1.7vw, 19px); color: var(--color-husk, #cfa863); letter-spacing: 0.01em;
+  }
+
+  /* Scroll cue: quiet invitation to keep going, not a decorative flourish -
+     it fades out the moment the person actually starts scrolling. */
+  .bv-scroll-cue {
+    position: absolute; left: 50%; bottom: calc(clamp(96px, 22vh, 260px) + 22px);
+    transform: translateX(-50%); z-index: 12;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    background: none; border: none; padding: 6px; cursor: pointer;
+    font-family: var(--font-body); color: rgba(242,237,225,0.75);
+  }
+  .bv-scroll-cue-text {
+    font-size: 11px; letter-spacing: 0.14em; white-space: nowrap;
+  }
+  .bv-scroll-cue-rail {
+    position: relative; width: 1px; height: 30px;
+    background: rgba(242,237,225,0.28); overflow: hidden; border-radius: 1px;
+  }
+  .bv-scroll-cue-dot {
+    position: absolute; left: -1.5px; top: 0; width: 4px; height: 4px;
+    border-radius: 50%; background: var(--color-husk, #cfa863);
+    animation: bv-scroll-dot 1.9s cubic-bezier(.65,0,.35,1) infinite;
+  }
+  @keyframes bv-scroll-dot {
+    0% { transform: translateY(-6px); opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translateY(30px); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bv-scroll-cue-dot { animation: none; top: 40%; opacity: 0.8; }
   }
 `;
 
@@ -257,7 +268,9 @@ export default function HeroSection() {
   const ringWrapRef = useRef<HTMLDivElement>(null);
   const ringRimRef = useRef<SVGSVGElement>(null);
   const captionRef = useRef<HTMLDivElement>(null);
+  const scrollCueRef = useRef<HTMLButtonElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const ringSizeRef = useRef(0);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [reducedMotion, setReducedMotion] = useState<boolean | null>(null);
@@ -278,6 +291,11 @@ export default function HeroSection() {
 
     let ticking = false;
     let lastActive = -1;
+
+    const measureRing = () => {
+      if (ringWrapRef.current) ringSizeRef.current = ringWrapRef.current.offsetWidth;
+    };
+    measureRing();
 
     const update = () => {
       ticking = false;
@@ -316,18 +334,16 @@ export default function HeroSection() {
         inner.style.width = "100%";
       }
 
-      // t: 0 = ring fully hidden, text centered. 1 = text has finished
-      // gliding left, ring sits at its half-revealed rest position.
+      // t: 0 = ring fully hidden, copy centered at full width. 1 = ring at
+      // its half-revealed rest position, copy has glided left and
+      // condensed to stay clear of it.
       const t = smoothstep(0, REVEAL_END, progress);
 
-      // -20vw scales proportionally with viewport width on its own (vw is a
-      // relative unit), so there's no separate mobile/desktop branch needed.
-      content.style.transform = `translateX(${t * -20}vw)`;
-
-      // ringSize is read live from the element every frame so positioning
-      // stays correct continuously across every viewport size - no
-      // breakpoint snap between "mobile" and "desktop" numbers.
-      const ringSize = ringWrap.offsetWidth;
+      // ringSize is measured once (on mount and on resize only, never inside
+      // this loop) - reading offsetWidth here every frame would force a
+      // synchronous layout reflow right after the position writes above,
+      // which is a classic cause of scroll jank.
+      const ringSize = ringSizeRef.current;
 
       // offsetPx = how far the ring's right edge sits beyond the viewport
       // edge. At t=0 that's the full width (0% visible - not shown at all).
@@ -336,10 +352,32 @@ export default function HeroSection() {
       ringWrap.style.transform = `translate(${offsetPx}px, -50%)`;
       ringWrap.style.opacity = String(smoothstep(0, 0.4, t));
 
+      // The copy block is centered and at its widest when the ring is
+      // hidden. As the ring reveals, its box narrows by exactly the ring's
+      // visible footprint, and its center point drifts left by half that
+      // amount - the combination holds the block's LEFT edge roughly still
+      // while its right edge recedes from the ring, which reads as the
+      // whole block gliding left rather than just shrinking in place.
+      const ringVisible = Math.max(0, ringSize - offsetPx);
+      const sidePadding = window.innerWidth * 0.06;
+      const fullWidth = window.innerWidth - sidePadding * 2;
+      const contentMaxW = clamp(fullWidth - ringVisible, 320, fullWidth);
+      content.style.maxWidth = `${contentMaxW}px`;
+      content.style.transform = `translateX(${-ringVisible / 2}px)`;
+
       // Caption sits just clear of the ring's visible edge, computed from
       // the ring's actual measured size rather than a guessed vh value - so
       // it can never overlap the ring at any viewport size.
       caption.style.right = `${ringSize / 2 + Math.max(28, ringSize * 0.05)}px`;
+
+      // The cue's only job is to invite the first scroll - once that's
+      // happened, it steps out of the way rather than lingering.
+      const scrollCue = scrollCueRef.current;
+      if (scrollCue) {
+        const cueOpacity = 1 - smoothstep(0, 0.05, progress);
+        scrollCue.style.opacity = String(cueOpacity);
+        scrollCue.style.pointerEvents = cueOpacity < 0.05 ? "none" : "auto";
+      }
 
       // Rotation only begins once the glide-in is fully done, and is a
       // straight linear function of the remaining scroll budget - so every
@@ -396,13 +434,18 @@ export default function HeroSection() {
       }
     };
 
+    const onResize = () => {
+      measureRing();
+      onScroll();
+    };
+
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    window.addEventListener("resize", onResize);
     update();
 
     return () => {
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("resize", onResize);
     };
   }, [reducedMotion]);
 
@@ -417,14 +460,15 @@ export default function HeroSection() {
       <section className="bv-static-hero">
         <style>{`
           ${SHARED_STYLES}
-          .bv-static-hero { position: relative; }
-          .bv-static-hero .bv-bg { position: relative; height: 100dvh; }
+          .bv-static-hero { position: relative; height: 100dvh; }
           .bv-static-content {
             position: absolute; inset: 0; z-index: 10;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             text-align: center; padding: 24px;
           }
+          .bv-static-hero .bv-scroll-cue { bottom: 28px; }
           .bv-static-list {
+            position: relative; z-index: 1;
             list-style: none; margin: 0; padding: 48px 24px;
             display: grid; gap: 16px;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -455,6 +499,12 @@ export default function HeroSection() {
           <div className="bv-static-content">
             <HeroCopy />
           </div>
+          <span className="bv-scroll-cue" aria-hidden="true">
+            <span className="bv-scroll-cue-text">Scroll to explore</span>
+            <span className="bv-scroll-cue-rail">
+              <span className="bv-scroll-cue-dot" />
+            </span>
+          </span>
         </div>
 
         <ul className="bv-static-list">
@@ -487,7 +537,8 @@ export default function HeroSection() {
         .bv-content {
           position: relative; z-index: 10; height: 100%;
           display: flex; flex-direction: column; align-items: center; justify-content: center;
-          text-align: center; padding: 0 5vw clamp(96px, 22vh, 260px); will-change: transform;
+          text-align: center; padding-bottom: clamp(96px, 22vh, 260px);
+          width: fit-content; max-width: min(980px, 90vw); margin: 0 auto; will-change: transform;
         }
         .bv-ring-wrap {
           position: absolute; top: 50%; right: 0;
@@ -556,15 +607,10 @@ export default function HeroSection() {
           .bv-caption { display: none; }
         }
 
-        @media (max-width: 860px) {
-          .bv-bg { background-attachment: scroll; }
-        }
-
         /* Short viewports (small laptops, landscape phones) - shrink
            everything vertically so the headline and ring both still fit. */
         @media (max-height: 560px) {
           .bv-content { padding-bottom: 24px; }
-          .bv-eyebrow { margin-bottom: 10px; }
           .bv-content h1 { font-size: clamp(28px, 5vw, 48px); }
           .bv-tagline { display: none; }
           .bv-offer { margin-top: 16px; }
@@ -572,7 +618,7 @@ export default function HeroSection() {
       `}</style>
 
       <div className="bv-pin-inner" ref={innerRef}>
-        <div className="bv-bg" style={{ position: "absolute" }} />
+        <div className="bv-bg" />
 
         <div className="bv-content" ref={contentRef}>
           <HeroCopy animated />
@@ -608,6 +654,20 @@ export default function HeroSection() {
           <h3>{active.label}</h3>
           <p>{active.detail}</p>
         </div>
+
+        <button
+          type="button"
+          className="bv-scroll-cue"
+          ref={scrollCueRef}
+          onClick={() =>
+            window.scrollTo({ top: window.innerHeight * 0.92, behavior: "smooth" })
+          }
+        >
+          <span className="bv-scroll-cue-text">Scroll to explore</span>
+          <span className="bv-scroll-cue-rail" aria-hidden="true">
+            <span className="bv-scroll-cue-dot" />
+          </span>
+        </button>
 
         {/* Screen-reader-only: the ring is aria-hidden since it's a slow,
             scroll-driven decorative reveal - this gives the same content
