@@ -1,4 +1,5 @@
 import AmenitiesSection from "./components/amenities/Amenitiessection";
+import BeyondEstate from "./components/beyond/BeyondEstate";
 import HeroSection from "./components/hero/HeroSection";
 import NavBar from "./components/hero/NavBar";
 import Footer from "./components/layout/Footer";
@@ -13,6 +14,7 @@ export default function Home() {
       <RoomsOverview />
       <AmenitiesSection />
       <GuestVoices />
+      <BeyondEstate />
       <Footer />
     </>
   );

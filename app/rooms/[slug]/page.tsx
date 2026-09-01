@@ -4,8 +4,17 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import NavBar from "../../components/hero/NavBar";
 import Footer from "../../components/layout/Footer";
-import SafeImage from "../../components/shared/SafeImage";
+import RoomGallery from "../../components/rooms/RoomGallery";
+import BookingTicket from "../../components/rooms/BookingTicket";
 import { ROOM_TYPES, getRoomBySlug, weekdayPrice, type AmenityIcon } from "../../lib/rooms";
+
+// Same invented place-names used as pins on the estate map in the Rooms
+// section - repeating them here ties the detail page back to that map.
+const PLACE_NAMES: Record<string, string> = {
+  "1bhk-cottage": "North Ridge",
+  "2bhk-villa": "The Hollow",
+  dormitory: "Trail's End",
+};
 
 export function generateStaticParams() {
   return ROOM_TYPES.map((r) => ({ slug: r.slug }));
@@ -103,6 +112,7 @@ export default async function RoomDetailPage({ params }: PageProps<"/rooms/[slug
     { length: room.galleryCount },
     (_, i) => `/rooms/${room.slug}/${i + 1}.jpg`
   );
+  const placeName = PLACE_NAMES[room.slug];
 
   return (
     <>
@@ -122,70 +132,43 @@ export default async function RoomDetailPage({ params }: PageProps<"/rooms/[slug
                 strokeLinejoin="round"
               />
             </svg>
-            Back to Rooms
+            Back to the map
           </Link>
 
           <div className="mt-6 grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:gap-14">
             {/* Gallery + description */}
             <div>
-              <span className="font-body text-[11px] font-semibold uppercase tracking-[0.24em] text-husk">
-                {room.tag}
-              </span>
-              <h1 className="mt-2 font-display text-4xl font-semibold text-ink sm:text-5xl">
+              {placeName && (
+                <span
+                  className="mb-2 inline-block font-display text-[13px] italic text-husk"
+                  style={{ transform: "rotate(-3deg)" }}
+                >
+                  {placeName} on the estate map
+                </span>
+              )}
+              <h1 className="font-display text-4xl font-semibold text-ink sm:text-5xl">
                 {room.name}
               </h1>
+              <p className="mt-1 font-body text-[12.5px] font-medium text-husk">{room.tag}</p>
 
-              <div className="relative mt-6 aspect-4/3 w-full overflow-hidden rounded-3xl bg-bark shadow-[0_20px_50px_rgba(30,42,29,0.18)]">
-                <SafeImage
-                  src={gallery[0]}
-                  alt={room.name}
-                  fill
-                  priority
-                  sizes="(min-width: 1024px) 60vw, 100vw"
-                  className="h-full w-full object-cover"
-                  fallbackLabel={room.comingSoon ? "Photos coming soon" : undefined}
-                />
+              <div className="mt-6">
+                <RoomGallery images={gallery} name={room.name} comingSoon={room.comingSoon} />
               </div>
-
-              {gallery.length > 1 && (
-                <div className="mt-3 grid grid-cols-4 gap-3">
-                  {gallery.slice(1).map((src, i) => (
-                    <div
-                      key={src}
-                      className="relative aspect-square overflow-hidden rounded-xl bg-bark"
-                    >
-                      <SafeImage
-                        src={src}
-                        alt={`${room.name} photo ${i + 2}`}
-                        fill
-                        sizes="140px"
-                        className="h-full w-full object-cover"
-                        fallbackLabel=""
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
 
               <p className="mt-8 max-w-2xl font-body text-[15px] leading-relaxed text-ink/70">
                 {room.description}
               </p>
 
               <h2 className="mt-12 font-display text-2xl font-semibold text-ink">
-                Amenities
+                What&apos;s here
               </h2>
-              <div className="mt-5 grid grid-cols-2 gap-4">
+              <div className="mt-2 max-w-lg divide-y divide-bark/10 border-t border-bark/10">
                 {room.amenities.map((a) => (
-                  <div
-                    key={a.label}
-                    className="flex items-center gap-3 rounded-2xl bg-white/70 p-4 ring-1 ring-bark/10"
-                  >
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sage/15 text-sage">
+                  <div key={a.label} className="flex items-center gap-4 py-4">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center text-husk [&_svg]:h-full [&_svg]:w-full">
                       {ICONS[a.icon]}
                     </span>
-                    <span className="font-body text-[13.5px] font-medium text-ink">
-                      {a.label}
-                    </span>
+                    <span className="font-body text-[14px] text-ink/80">{a.label}</span>
                   </div>
                 ))}
               </div>
@@ -193,88 +176,14 @@ export default async function RoomDetailPage({ params }: PageProps<"/rooms/[slug
 
             {/* Booking panel */}
             <aside className="h-fit lg:sticky lg:top-28">
-              <div className="rounded-3xl bg-white p-7 shadow-[0_20px_50px_rgba(30,42,29,0.12)] ring-1 ring-bark/10">
-                <p className="font-display text-2xl font-semibold text-ink">
-                  ₹{room.weekendPrice.toLocaleString("en-IN")}
-                  <span className="ml-1 font-body text-[13px] font-normal text-ink/50">
-                    {room.unit}
-                  </span>
-                </p>
-                <p className="mt-1 font-body text-[12.5px] text-sage">
-                  ₹{weekdayPrice(room).toLocaleString("en-IN")}
-                  {room.unit} · Mon–Thu (10% off)
-                </p>
-
-                <div className="mt-6 grid grid-cols-2 gap-3">
-                  <label className="block">
-                    <span className="font-body text-[11px] font-medium uppercase tracking-[0.08em] text-ink/50">
-                      Check-in
-                    </span>
-                    <span className="mt-1 flex items-center justify-between rounded-xl border border-bark/15 px-3 py-2.5 font-body text-[13px] text-ink/70">
-                      Select date
-                      <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5 text-ink/40">
-                        <path
-                          d="M4 6l4 4 4-4"
-                          stroke="currentColor"
-                          strokeWidth="1.4"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </span>
-                  </label>
-                  <label className="block">
-                    <span className="font-body text-[11px] font-medium uppercase tracking-[0.08em] text-ink/50">
-                      Check-out
-                    </span>
-                    <span className="mt-1 flex items-center justify-between rounded-xl border border-bark/15 px-3 py-2.5 font-body text-[13px] text-ink/70">
-                      Select date
-                      <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5 text-ink/40">
-                        <path
-                          d="M4 6l4 4 4-4"
-                          stroke="currentColor"
-                          strokeWidth="1.4"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </span>
-                  </label>
-                </div>
-
-                <label className="mt-3 block">
-                  <span className="font-body text-[11px] font-medium uppercase tracking-[0.08em] text-ink/50">
-                    Guests
-                  </span>
-                  <span className="mt-1 flex items-center justify-between rounded-xl border border-bark/15 px-3 py-2.5 font-body text-[13px] text-ink/70">
-                    2 Guests
-                    <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5 text-ink/40">
-                      <path
-                        d="M4 6l4 4 4-4"
-                        stroke="currentColor"
-                        strokeWidth="1.4"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </span>
-                </label>
-
-                <button
-                  type="button"
-                  className="mt-6 w-full rounded-xl bg-ink py-3.5 font-body text-[13.5px] font-semibold text-mist transition-all hover:-translate-y-0.5 hover:shadow-[0_10px_26px_rgba(201,160,92,0.4)]"
-                >
-                  Check Availability
-                </button>
-                <p className="mt-3 text-center font-body text-[11.5px] text-ink/45">
-                  You won&apos;t be charged yet
-                </p>
-
-                <div className="mt-6 space-y-2 border-t border-bark/10 pt-5 font-body text-[12.5px] text-ink/60">
-                  <p>Check-in from 12:00 PM · Check-out by 11:00 AM</p>
-                  <p>Weekend rate applies Friday–Sunday</p>
-                </div>
-              </div>
+              <BookingTicket
+                room={{
+                  weekendPrice: room.weekendPrice,
+                  weekdayPrice: weekdayPrice(room),
+                  weekdayDiscountPct: room.weekdayDiscountPct,
+                  unit: room.unit,
+                }}
+              />
             </aside>
           </div>
         </div>
