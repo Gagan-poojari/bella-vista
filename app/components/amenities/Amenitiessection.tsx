@@ -139,6 +139,66 @@ export default function AmenitiesSection() {
 
   return (
     <section id="amenities" ref={sectionRef} className="relative overflow-hidden bg-mist py-24 sm:py-32">
+      {/* ----------------- DISTINCT ESTATE PLANTATION & FOOTPATH PATTERN ----------------- */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+        {/* Layer 1: Fine estate plantation grid with surveyor crosshairs */}
+        <div
+          className="absolute inset-0 opacity-[0.06]"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, #4a3728 1px, transparent 1px), linear-gradient(to bottom, #4a3728 1px, transparent 1px)",
+            backgroundSize: "48px 48px",
+          }}
+        />
+
+        {/* Layer 2: Subtle botanical woven linen grain */}
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(45deg, #1e2a1d 0px, #1e2a1d 1px, transparent 1px, transparent 12px), repeating-linear-gradient(-45deg, #c9a05c 0px, #c9a05c 1px, transparent 1px, transparent 12px)",
+          }}
+        />
+
+        {/* Layer 3: Ambient sun-dappled estate canopy illumination */}
+        <div
+          className="absolute inset-0 opacity-30"
+          style={{
+            background:
+              "radial-gradient(ellipse 60% 40% at 85% 15%, rgba(201,160,92,0.18), transparent 65%), radial-gradient(ellipse 70% 50% at 15% 90%, rgba(124,139,111,0.18), transparent 70%)",
+          }}
+        />
+
+        {/* Layer 4: Coffee plantation branch & leaf botanical vector watermark */}
+        <svg
+          className="absolute -left-12 -top-12 h-96 w-96 text-ink/5"
+          viewBox="0 0 200 200"
+          fill="none"
+          stroke="currentColor"
+        >
+          <path d="M20 180 Q80 120 140 40 M140 40 Q180 20 190 10" strokeWidth="1.8" strokeLinecap="round" />
+          <path d="M60 140 C50 110 80 100 100 110 C90 135 70 145 60 140 Z" fill="currentColor" strokeWidth="1" />
+          <path d="M100 100 C110 70 140 65 150 85 C135 105 115 105 100 100 Z" fill="currentColor" strokeWidth="1" />
+          <path d="M85 125 C105 120 120 135 115 150 C95 155 80 140 85 125 Z" fill="currentColor" strokeWidth="1" />
+          <circle cx="82" cy="118" r="4" fill="var(--color-husk)" opacity="0.6" />
+          <circle cx="90" cy="112" r="3.5" fill="var(--color-rust)" opacity="0.6" />
+          <circle cx="120" cy="80" r="4" fill="var(--color-husk)" opacity="0.6" />
+        </svg>
+
+        <svg
+          className="absolute -bottom-16 -right-12 h-96 w-96 text-ink/5"
+          viewBox="0 0 200 200"
+          fill="none"
+          stroke="currentColor"
+        >
+          <path d="M180 20 Q120 80 60 160 M60 160 Q20 180 10 190" strokeWidth="1.8" strokeLinecap="round" />
+          <path d="M140 60 C150 90 120 100 100 90 C110 65 130 55 140 60 Z" fill="currentColor" strokeWidth="1" />
+          <path d="M100 100 C90 130 60 135 50 115 C65 95 85 95 100 100 Z" fill="currentColor" strokeWidth="1" />
+          <circle cx="118" cy="82" r="4" fill="var(--color-rust)" opacity="0.6" />
+          <circle cx="110" cy="88" r="3.5" fill="var(--color-husk)" opacity="0.6" />
+        </svg>
+      </div>
+
       <style>{`
         [data-reveal] { opacity: 0; transform: translateY(24px); filter: blur(5px); }
         [data-reveal].am-in { animation: am-rise 1s cubic-bezier(.19,.75,.24,1) forwards; }

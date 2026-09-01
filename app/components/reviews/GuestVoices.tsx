@@ -103,10 +103,70 @@ export default function GuestVoices() {
     <section
       id="reviews"
       ref={sectionRef}
-      className="relative overflow-hidden bg-[#141c13] py-28 sm:py-36"
+      className="relative overflow-hidden bg-[#121911] py-28 sm:py-36"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
+      {/* ----------------- ARCHITECTURAL VERANDA ARCH & BOTANICAL VIGNETTE ----------------- */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+        {/* Top/bottom golden transition hairlines */}
+        <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-husk/40 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent via-husk/30 to-transparent" />
+
+        {/* Center glowing lantern aura behind the testimonial */}
+        <div
+          className="absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-35"
+          style={{
+            background: "radial-gradient(circle, rgba(201,160,92,0.3) 0%, rgba(124,139,111,0.12) 50%, transparent 70%)",
+            filter: "blur(60px)",
+          }}
+        />
+
+        {/* Concentric Architectural Acoustic / Voice Arcs in gold */}
+        <svg
+          className="absolute left-1/2 top-1/2 h-[700px] w-[700px] -translate-x-1/2 -translate-y-1/2 opacity-[0.15]"
+          viewBox="0 0 400 400"
+          fill="none"
+          stroke="currentColor"
+        >
+          <circle cx="200" cy="200" r="190" stroke="#c9a05c" strokeWidth="1" strokeDasharray="3 9" />
+          <circle cx="200" cy="200" r="150" stroke="#c9a05c" strokeWidth="1.2" />
+          <circle cx="200" cy="200" r="110" stroke="#7c8b6f" strokeWidth="1" strokeDasharray="2 6" />
+          <circle cx="200" cy="200" r="70" stroke="#c9a05c" strokeWidth="1.2" strokeDasharray="4 8" />
+          <line x1="200" y1="10" x2="200" y2="390" stroke="#c9a05c" strokeWidth="0.8" strokeDasharray="2 8" opacity="0.4" />
+          <line x1="10" y1="200" x2="390" y2="200" stroke="#c9a05c" strokeWidth="0.8" strokeDasharray="2 8" opacity="0.4" />
+        </svg>
+
+        {/* Left Botanical Branch Line-Art */}
+        <svg
+          className="absolute -left-8 top-1/4 h-96 w-64 text-husk opacity-[0.08]"
+          viewBox="0 0 160 320"
+          fill="none"
+          stroke="currentColor"
+        >
+          <path d="M10,320 Q60,200 80,80 Q90,30 110,0" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M40,240 C10,210 20,180 50,190 C65,220 55,235 40,240 Z" fill="currentColor" opacity="0.3" strokeWidth="1" />
+          <path d="M70,150 C110,130 120,160 90,175 C70,170 65,160 70,150 Z" fill="currentColor" opacity="0.3" strokeWidth="1" />
+          <path d="M75,90 C45,70 55,40 85,55 C95,75 85,85 75,90 Z" fill="currentColor" opacity="0.3" strokeWidth="1" />
+          <circle cx="68" cy="155" r="4" fill="currentColor" />
+          <circle cx="76" cy="148" r="3.5" fill="currentColor" />
+        </svg>
+
+        {/* Right Botanical Branch Line-Art */}
+        <svg
+          className="absolute -right-8 bottom-1/4 h-96 w-64 text-husk opacity-[0.08]"
+          viewBox="0 0 160 320"
+          fill="none"
+          stroke="currentColor"
+        >
+          <path d="M150,0 Q100,120 80,240 Q70,290 50,320" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M120,80 C150,110 140,140 110,130 C95,100 105,85 120,80 Z" fill="currentColor" opacity="0.3" strokeWidth="1" />
+          <path d="M90,170 C50,190 40,160 70,145 C90,150 95,160 90,170 Z" fill="currentColor" opacity="0.3" strokeWidth="1" />
+          <circle cx="92" cy="165" r="4" fill="currentColor" />
+          <circle cx="84" cy="172" r="3.5" fill="currentColor" />
+        </svg>
+      </div>
+
       <style>{`
         [data-reveal] { opacity: 0; transform: translateY(24px); filter: blur(5px); }
         [data-reveal].gv-in { animation: gv-rise 1s cubic-bezier(.19,.75,.24,1) forwards; }
@@ -115,42 +175,14 @@ export default function GuestVoices() {
           [data-reveal] { opacity: 1; transform: none; filter: none; }
         }
 
-        .gv-blob { position: absolute; border-radius: 9999px; filter: blur(90px); }
-        .gv-blob-1 { animation: gv-drift-1 46s ease-in-out infinite; }
-        .gv-blob-2 { animation: gv-drift-2 58s ease-in-out infinite; }
-        .gv-blob-3 { animation: gv-drift-3 64s ease-in-out infinite; }
-        @keyframes gv-drift-1 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(60px,-40px) scale(1.15); } }
-        @keyframes gv-drift-2 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-70px,30px) scale(1.1); } }
-        @keyframes gv-drift-3 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(30px,50px) scale(0.92); } }
-        @media (prefers-reduced-motion: reduce) {
-          .gv-blob-1, .gv-blob-2, .gv-blob-3 { animation: none; }
-        }
-
-        .gv-quote { transition: opacity .5s ease, transform .5s cubic-bezier(.19,.75,.24,1); }
-        .gv-quote.is-out { opacity: 0; transform: translateY(10px); }
+        .gv-quote { transition: opacity .45s ease, transform .45s cubic-bezier(.19,.75,.24,1); }
+        .gv-quote.is-out { opacity: 0; transform: translateY(8px); }
         .gv-quote.is-in { opacity: 1; transform: translateY(0); }
         @media (prefers-reduced-motion: reduce) { .gv-quote { transition: opacity .2s ease; } }
 
         .gv-progress { animation: gv-fill linear forwards; animation-duration: ${AUTOPLAY_MS}ms; }
         @keyframes gv-fill { from { width: 0%; } to { width: 100%; } }
       `}</style>
-
-      {/* Slow-drifting colour blobs standing in for mist over the valley -
-          soft, ambient, unlike the grain/lines used elsewhere on the page. */}
-      <div className="pointer-events-none absolute inset-0">
-        <div
-          className="gv-blob gv-blob-1 -left-24 top-0 h-105 w-105 opacity-30"
-          style={{ background: "radial-gradient(closest-side, rgba(201,160,92,0.45), transparent 72%)" }}
-        />
-        <div
-          className="gv-blob gv-blob-2 right-[-10%] top-1/4 h-120 w-120 opacity-25"
-          style={{ background: "radial-gradient(closest-side, rgba(122,150,110,0.4), transparent 72%)" }}
-        />
-        <div
-          className="gv-blob gv-blob-3 left-1/3 bottom-[-15%] h-95 w-95 opacity-20"
-          style={{ background: "radial-gradient(closest-side, rgba(242,237,225,0.3), transparent 72%)" }}
-        />
-      </div>
 
       <div className="relative mx-auto max-w-4xl px-6 sm:px-8">
         <div className="text-center">
@@ -167,48 +199,65 @@ export default function GuestVoices() {
           </h2>
         </div>
 
-        <div data-reveal className="relative mt-16 sm:mt-20">
+        {/* Glassmorphic Storyteller Podium Frame */}
+        <div
+          data-reveal
+          className="relative mt-14 rounded-3xl border border-white/10 bg-white/[0.04] p-8 shadow-[0_24px_60px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-md sm:mt-16 sm:p-12"
+        >
+          {/* Decorative brass corner brackets */}
+          <span className="absolute left-3 top-3 h-3 w-3 border-l border-t border-husk/50" aria-hidden="true" />
+          <span className="absolute right-3 top-3 h-3 w-3 border-r border-t border-husk/50" aria-hidden="true" />
+          <span className="absolute bottom-3 left-3 h-3 w-3 border-b border-l border-husk/50" aria-hidden="true" />
+          <span className="absolute bottom-3 right-3 h-3 w-3 border-b border-r border-husk/50" aria-hidden="true" />
+
+          {/* Large decorative quotation watermark */}
           <span
-            className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 select-none font-display text-[220px] leading-none text-mist/6 sm:-top-20"
+            className="pointer-events-none absolute left-1/2 top-6 -translate-x-1/2 select-none font-display text-[140px] leading-none text-husk/[0.07] sm:text-[180px]"
             aria-hidden="true"
           >
             &rdquo;
           </span>
 
-          <div className="relative min-h-45 text-center sm:min-h-37.5">
+          <div className="relative min-h-[160px] text-center sm:min-h-[140px]">
             <div className={`gv-quote ${entering ? "is-in" : "is-out"}`}>
-              <div className="flex justify-center gap-1 text-husk">
+              {/* Star Rating */}
+              <div className="flex justify-center gap-1.5 text-husk">
                 {Array.from({ length: 5 }).map((_, s) => (
                   <Star key={s} i={s} />
                 ))}
               </div>
+
+              {/* Review Quote */}
               <blockquote className="mx-auto mt-6 max-w-2xl font-display text-2xl italic leading-relaxed text-mist sm:text-3xl">
                 &ldquo;{active.quote}&rdquo;
               </blockquote>
-              <p className="mt-6 font-body text-[13px] tracking-wide text-mist/55">
-                {active.name} &nbsp;·&nbsp; {active.location}
-              </p>
+
+              {/* Reviewer Details */}
+              <div className="mt-6 flex items-center justify-center gap-2 font-body text-[13px] tracking-wide text-mist/60">
+                <span className="font-medium text-mist/90">{active.name}</span>
+                <span>·</span>
+                <span className="text-husk/80">{active.location}</span>
+              </div>
             </div>
           </div>
 
-          {/* Name tabs double as navigation and a progress indicator for
-              the currently-showing quote. */}
-          <div className="mt-14 flex items-center justify-center gap-8 sm:gap-12">
+          {/* Interactive Navigation Tabs */}
+          <div className="mt-10 flex items-center justify-center gap-6 sm:gap-10 border-t border-white/5 pt-8">
             {REVIEWS.map((r, i) => (
               <button
                 key={r.name}
                 onClick={() => goTo(i)}
-                className="group flex flex-col items-center gap-2.5"
+                className="group flex flex-col items-center gap-2 outline-none"
                 aria-label={`Show ${r.name}'s review`}
                 aria-current={i === index}
               >
                 <span
-                  className="font-body text-[12px] tracking-wide transition-colors"
+                  className="font-body text-[12.5px] font-medium tracking-wide transition-colors"
                   style={{ color: i === index ? "#f2ede1" : "rgba(242,237,225,0.4)" }}
                 >
                   {r.name}
                 </span>
-                <span className="h-px w-12 overflow-hidden rounded-full bg-mist/15">
+                <span className="h-0.5 w-10 overflow-hidden rounded-full bg-mist/15">
                   {i === index && !paused && !reduceMotion && (
                     <span key={index} className="gv-progress block h-full bg-husk" />
                   )}
