@@ -24,6 +24,9 @@ export const metadata: Metadata = {
   title: "Bella Vista Homestay | Chikkamagaluru",
   description:
     "A homestay tucked into a coffee estate above Chikkamagaluru, Karnataka.",
+  icons: {
+    icon: "/bv-logo.png",
+  }
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

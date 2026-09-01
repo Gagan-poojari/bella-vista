@@ -3,7 +3,7 @@ import { ROOM_TYPES } from "../../lib/rooms";
 
 export default function Footer() {
   return (
-    <footer className="bg-ink">
+    <footer className="relative z-10 bg-ink">
       <div className="mx-auto max-w-6xl px-6 py-16 sm:px-8">
         <div className="grid gap-10 sm:grid-cols-[1.4fr_1fr_1fr]">
           <div>

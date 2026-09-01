@@ -20,6 +20,11 @@ const ANCHOR_GAP = 40; // gap-10 = 2.5rem
 // hero (glide = 0), tapering back to 1x once it's docked in the pill.
 const LOGO_SCALE_OUT = 1.32;
 
+// Below this width the logo skips the "parked over the hero" phase entirely
+// and stays docked in the pill - matches the md breakpoint where the full
+// desktop nav (links + Book Now) takes over from the hamburger.
+const LARGE_DEVICE = 768;
+
 function clamp(v: number, a: number, b: number) {
   return Math.max(a, Math.min(b, v));
 }
@@ -58,9 +63,14 @@ export default function Navbar() {
       const wordmark = wordmarkRef.current;
       if (!standAnchor || !navAnchor || !navAnchorRect || !cluster || !wordmark) return;
 
+      // The park-over-hero-then-glide-home effect is a large-device flourish
+      // only. On mobile the logo stays docked in the pill from the first
+      // frame - below LARGE_DEVICE there's no separate "parked" phase at all.
+      const isLargeDevice = window.innerWidth >= LARGE_DEVICE;
+
       // Find the pinned hero (if this page has one) to know when it has
       // fully scrolled past - that's the cue for the logo to glide home.
-      const hero = document.querySelector("[data-hero-pin]");
+      const hero = isLargeDevice ? document.querySelector("[data-hero-pin]") : null;
       let glide = 1;
       if (hero) {
         const rect = hero.getBoundingClientRect();
@@ -142,7 +152,7 @@ export default function Navbar() {
   }, [open]);
 
   return (
-    <header ref={headerRef} className="fixed inset-x-0 top-0 z-[1000]">
+    <header ref={headerRef} className="fixed inset-x-0 top-0 z-1000">
       {/* Invisible anchors purely for measuring where the logo starts (over
           the hero) and ends (inside the pill). Never rendered visibly. */}
       <div
@@ -161,7 +171,7 @@ export default function Navbar() {
         <div
           aria-hidden
           className={[
-            "pointer-events-none absolute -inset-[1.5px] rounded-full overflow-hidden transition-opacity duration-500",
+            "pointer-events-none absolute inset-[-1.5px] rounded-full overflow-hidden transition-opacity duration-500",
             scrolled ? "opacity-100" : "opacity-80",
           ].join(" ")}
         >
@@ -192,7 +202,7 @@ export default function Navbar() {
 
         <nav
           className={[
-            "relative z-[1] flex items-center rounded-full border px-4 py-2 pl-4 sm:pl-6 transition-colors duration-300",
+            "relative z-1 flex items-center rounded-full border px-4 py-2 sm:px-6 transition-colors duration-300",
             scrolled
               ? "border-bark/10 bg-mist/95 shadow-[0_10px_34px_rgba(30,42,29,0.22)]"
               : "border-mist/30 bg-mist/90 shadow-[0_8px_28px_rgba(30,42,29,0.16)]",
@@ -228,7 +238,9 @@ export default function Navbar() {
 
             <button
               type="button"
-              className="cursor-pointer group/cta relative hidden shrink-0 overflow-hidden rounded-full bg-ink px-6 py-2.5 font-body text-[13px] font-semibold tracking-[0.02em] text-mist shadow-[0_1px_0_rgba(244,227,171,0.25)_inset,0_8px_18px_rgba(20,26,18,0.35)] transition-all duration-300 hover:shadow-[0_1px_0_rgba(244,227,171,0.35)_inset,0_10px_26px_rgba(196,155,74,0.5)] hover:ring-[#e9cd8a]/70 active:translate-y-0 active:scale-[0.96] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c49b4a] md:inline-flex md:items-center md:gap-2"
+              className="cursor-pointer group/cta relative hidden shrink-0 overflow-hidden rounded-full bg-ink px-6 py-2.5 font-body text-[13px] font-semibold tracking-[0.02em]
+               text-mist shadow-[0_1px_0_rgba(244,227,171,0.25)_inset,0_8px_18px_rgba(20,26,18,0.35)] transition-all duration-300 hover:shadow-[0_1px_0_rgba(244,227,171,0.35)_inset,0_10px_26px_rgba(196,155,74,0.5)]
+                hover:ring-[#e9cd8a]/70 active:translate-y-0 active:scale-[0.96] focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-[#c49b4a] md:inline-flex md:items-center md:gap-2"
             >
               {/* brass foil sweep - one clean pass on hover, not a looping effect */}
               <span
@@ -259,12 +271,12 @@ export default function Navbar() {
               <span className="relative block h-[1.5px] w-4 bg-bark">
                 <span
                   className={`absolute left-0 h-[1.5px] w-4 bg-bark transition-transform duration-200 ${
-                    open ? "top-0 rotate-45" : "-top-[5px]"
+                    open ? "top-0 rotate-45" : "-top-1.25"
                   }`}
                 />
                 <span
                   className={`absolute left-0 h-[1.5px] w-4 bg-bark transition-transform duration-200 ${
-                    open ? "top-0 -rotate-45" : "top-[5px]"
+                    open ? "top-0 -rotate-45" : "top-1.25"
                   }`}
                 />
               </span>
@@ -278,7 +290,7 @@ export default function Navbar() {
           larger (out over the hero) down to 1x as it docks into the pill. */}
       <div
         ref={logoClusterRef}
-        className="pointer-events-none fixed left-4 top-0 z-[1001] flex items-center gap-2.5 will-change-transform"
+        className="pointer-events-none fixed left-4 top-0 z-1001 flex items-center gap-2.5 will-change-transform"
       >
         <div className="pointer-events-auto flex h-9 w-9 items-center justify-center overflow-hidden rounded-full ring-1 ring-[#c49b4a]/50 sm:h-10 sm:w-10">
           <Image src="/bv-logo.png" alt="Bella Vista" width={40} height={40} priority className="h-full w-full object-cover" />
@@ -296,7 +308,7 @@ export default function Navbar() {
       <div
         aria-hidden
         onClick={() => setOpen(false)}
-        className={`fixed inset-0 z-[1001] bg-ink/30 backdrop-blur-[2px] transition-opacity duration-300 md:hidden ${
+        className={`fixed inset-0 z-1001 bg-ink/30 backdrop-blur-[2px] transition-opacity duration-300 md:hidden ${
           open ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       />
@@ -308,7 +320,7 @@ export default function Navbar() {
         aria-modal="true"
         aria-hidden={!open}
         style={{ top: "calc(76px + env(safe-area-inset-top))" }}
-        className={`fixed left-1/2 z-[1002] w-[min(90vw,320px)] -translate-x-1/2 rounded-3xl border border-bark/10 bg-mist/95 p-3 shadow-[0_20px_50px_rgba(30,42,29,0.3)] backdrop-blur-xl transition-all duration-300 md:hidden ${
+        className={`fixed left-1/2 z-1002 w-[min(90vw,320px)] -translate-x-1/2 rounded-3xl border border-bark/10 bg-mist/95 p-3 shadow-[0_20px_50px_rgba(30,42,29,0.3)] backdrop-blur-xl transition-all duration-300 md:hidden ${
           open ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-3 opacity-0"
         }`}
       >

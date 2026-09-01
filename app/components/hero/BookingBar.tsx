@@ -570,15 +570,15 @@ function DateTrigger({
       className={`group flex w-full flex-col gap-1 text-left outline-none transition-colors focus-visible:ring-2 focus-visible:ring-husk focus-visible:ring-inset ${bare ? "px-4 py-3" : "border-r border-bark/10 px-5 py-3"
         } ${active ? "bg-husk/10" : "hover:bg-husk/[0.08]"}`}
     >
-      <span className="flex items-center gap-1.5 font-body text-[10.5px] font-semibold uppercase tracking-[0.1em] text-husk">
+      <span className="flex items-center gap-1.5 font-body text-[10.5px] font-semibold uppercase tracking-[0.1em] text-[#8f5300]">
         <CalendarGlyph className="h-3 w-3 opacity-70" />
         {label}
       </span>
-      <span className={`flex items-center justify-between font-body text-[14.5px] font-medium ${empty ? "text-bark/40" : "text-ink"}`}>
+      <span className={`flex items-center justify-between font-body text-[14.5px] font-medium ${empty ? "text-bark/80" : "text-ink"}`}>
         {iso ? formatShort(iso) : placeholder}
         <svg
           viewBox="0 0 12 8"
-          className={`h-2.5 w-2.5 shrink-0 text-husk transition-transform duration-200 ${active ? "rotate-180" : ""}`}
+          className={`h-2.5 w-2.5 shrink-0 text-[#8f5300] transition-transform duration-200 ${active ? "rotate-180" : ""}`}
           fill="none"
         >
           <path d="M1 1.5 6 6.5 11 1.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
@@ -604,7 +604,7 @@ function SearchButton({
       onClick={onClick}
       className={`group relative col-span-1 flex items-center justify-center gap-2 overflow-hidden bg-ink px-8 py-3.5 font-body text-[14.5px] font-semibold text-mist transition-all duration-200 cursor-pointer hover:bg-[#8d6700] hover:shadow-[0_12px_28px_rgba(30,42,29,0.35)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-husk disabled:pointer-events-none disabled:translate-y-0 disabled:opacity-40 disabled:shadow-none ${className}`}
     >
-      <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-mist/25 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+      <span className="pointer-events-none absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-mist/25 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
       <span className="relative">Check Availability</span>
     </button>
   );

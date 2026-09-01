@@ -274,6 +274,11 @@ export default function HeroSection() {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [reducedMotion, setReducedMotion] = useState<boolean | null>(null);
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+
+  const railRef = useRef<HTMLUListElement>(null);
+  const railItemRefs = useRef<(HTMLLIElement | null)[]>([]);
+  const [railActive, setRailActive] = useState(0);
 
   // Detect reduced-motion preference once on mount, and keep it in sync if
   // the user changes it mid-session. Starts as `null` (not "false") so the
@@ -286,8 +291,51 @@ export default function HeroSection() {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
+  // The 380vh scroll-jacked ring is a desktop interaction, full stop - on
+  // touch devices it's not just cramped, it's actively unreliable: mobile
+  // browsers resize window.innerHeight mid-scroll as the address bar
+  // hides/shows, which breaks the manual pin math frame-to-frame, and
+  // toggling position:fixed by hand (rather than via native `sticky`) is a
+  // known stutter source on iOS Safari specifically. Below this width we
+  // swap to a purpose-built mobile hero instead of squeezing the desktop
+  // one down. Same null-until-known pattern as reducedMotion, so nothing
+  // flashes the wrong layout before we know.
   useEffect(() => {
-    if (reducedMotion !== false) return; // only run the scroll rig for motion-ok users
+    const mq = window.matchMedia("(max-width: 780px)");
+    setIsMobile(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  // Drives the dot pagination under the mobile swipe rail: watches which
+  // card is most visible inside the horizontally-scrolling strip and marks
+  // it active. Only ever finds elements to observe once the mobile branch
+  // below has actually mounted the rail; harmlessly no-ops otherwise.
+  useEffect(() => {
+    const rail = railRef.current;
+    const items = railItemRefs.current.filter(Boolean) as HTMLLIElement[];
+    if (!rail || !items.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const best = entries.reduce<{ i: number; ratio: number } | null>((acc, entry) => {
+          const i = items.indexOf(entry.target as HTMLLIElement);
+          if (i === -1) return acc;
+          return !acc || entry.intersectionRatio > acc.ratio
+            ? { i, ratio: entry.intersectionRatio }
+            : acc;
+        }, null);
+        if (best && best.ratio > 0.5) setRailActive(best.i);
+      },
+      { root: rail, threshold: [0.5, 0.75, 1] }
+    );
+    items.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [reducedMotion, isMobile]);
+
+  useEffect(() => {
+    if (reducedMotion !== false || isMobile !== false) return; // only run the scroll rig for desktop, motion-ok users
 
     let ticking = false;
     let lastActive = -1;
@@ -447,26 +495,37 @@ export default function HeroSection() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
     };
-  }, [reducedMotion]);
+  }, [reducedMotion, isMobile]);
 
-  // Avoid rendering either version until we know the motion preference, so
-  // reduced-motion users never see a flash of the scroll-jacked layout.
-  if (reducedMotion === null) {
+  // Avoid rendering any version until we know both flags, so nobody ever
+  // sees a flash of the wrong layout (scroll-jacked on a phone, or the
+  // cramped desktop-shrunk one before we know better).
+  if (reducedMotion === null || isMobile === null) {
     return <section aria-hidden="true" style={{ height: "100dvh" }} />;
   }
 
-  if (reducedMotion) {
+  if (reducedMotion || isMobile) {
     return (
       <section className="bv-static-hero">
         <style>{`
           ${SHARED_STYLES}
-          .bv-static-hero { position: relative; height: 100dvh; }
+          .bv-hero-frame { position: relative; height: 100dvh; overflow: hidden; }
+          .bv-static-hero .bv-bg {
+            /* Deliberately NOT position:fixed here, unlike the desktop
+               background - fixed positioning combined with mobile browser
+               chrome (address bar show/hide) and on-screen keyboards
+               (booking bar date fields) is a well-known source of jitter
+               on iOS Safari. This hero is a single natural-scrolling
+               screen, so a plain absolute layer is both simpler and safer. */
+            position: absolute;
+          }
           .bv-static-content {
             position: absolute; inset: 0; z-index: 10;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             text-align: center; padding: 24px;
           }
           .bv-static-hero .bv-scroll-cue { bottom: 28px; }
+
           .bv-static-list {
             position: relative; z-index: 1;
             list-style: none; margin: 0; padding: 48px 24px;
@@ -479,47 +538,120 @@ export default function HeroSection() {
             padding: 16px; border-radius: 10px;
             background: rgba(239,237,228,0.05); border: 1px solid rgba(201,160,92,0.25);
           }
-          .bv-static-list .bv-icon {
+
+          /* Mobile: the same "explore the stay details" idea as the desktop
+             ring, translated into an interaction phones already know -
+             swipe a strip of cards, with dots tracking where you are.
+             Native CSS scroll-snap, no JS drives the motion itself. */
+          .bv-rail-wrap { position: relative; z-index: 1; background: #1a251c; padding: 30px 0 26px; }
+          .bv-rail {
+            display: flex; gap: 14px; margin: 0; padding: 4px 24px 6px;
+            list-style: none; overflow-x: auto; overscroll-behavior-x: contain;
+            scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+          }
+          .bv-rail::-webkit-scrollbar { display: none; }
+          .bv-rail li {
+            scroll-snap-align: start; flex: 0 0 auto; width: min(74vw, 280px);
+            display: flex; align-items: center; gap: 14px;
+            padding: 16px; border-radius: 14px;
+            background: rgba(239,237,228,0.05); border: 1px solid rgba(201,160,92,0.25);
+          }
+          .bv-rail-dots { display: flex; justify-content: center; gap: 7px; margin-top: 14px; }
+          .bv-rail-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: rgba(239,237,228,0.25);
+            transition: background .25s, transform .25s;
+          }
+          .bv-rail-dot.is-active { background: var(--color-husk); transform: scale(1.4); }
+
+          .bv-static-list .bv-icon, .bv-rail .bv-icon {
             width: 38px; height: 38px; flex-shrink: 0; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             border: 1px solid rgba(201,160,92,0.4); color: var(--color-husk);
           }
-          .bv-static-list .bv-icon svg { width: 18px; height: 18px; }
-          .bv-static-list .bv-text-label {
+          .bv-static-list .bv-icon svg, .bv-rail .bv-icon svg { width: 18px; height: 18px; }
+          .bv-static-list .bv-text-label, .bv-rail .bv-text-label {
             display: block; font-family: var(--font-body); font-weight: 600;
             font-size: 14px; color: var(--color-mist);
           }
-          .bv-static-list .bv-text-detail {
+          .bv-static-list .bv-text-detail, .bv-rail .bv-text-detail {
             display: block; font-family: var(--font-body); font-size: 12.5px;
             color: rgba(239,237,228,0.72); margin-top: 2px;
           }
+
+          /* Phones: the desktop clamps bottom out at sizes still tuned for
+             a much wider canvas. Give the hero its own scale instead of
+             inheriting the desktop's floor. */
+          @media (max-width: 640px) {
+            .bv-static-content { padding: 20px; }
+            .bv-static-content h1 { font-size: clamp(34px, 10.5vw, 48px); }
+            .bv-static-content .bv-tagline { font-size: 14.5px; max-width: 30ch; }
+            .bv-offer { margin-top: 22px; padding: 8px 20px 8px 8px; gap: 12px; }
+            .bv-offer-icon { width: 32px; height: 32px; }
+            .bv-offer-icon svg { width: 15px; height: 15px; }
+            .bv-offer-value { font-size: 16px; }
+          }
         `}</style>
 
-        <div className="bv-bg">
-          <div className="bv-static-content">
-            <HeroCopy />
-          </div>
-          <span className="bv-scroll-cue" aria-hidden="true">
-            <span className="bv-scroll-cue-text">Scroll to explore</span>
-            <span className="bv-scroll-cue-rail">
-              <span className="bv-scroll-cue-dot" />
+        <div className="bv-hero-frame">
+          <div className="bv-bg">
+            <div className="bv-static-content">
+              <HeroCopy />
+            </div>
+            <span className="bv-scroll-cue" aria-hidden="true">
+              <span className="bv-scroll-cue-text">Scroll to explore</span>
+              <span className="bv-scroll-cue-rail">
+                <span className="bv-scroll-cue-dot" />
+              </span>
             </span>
-          </span>
+          </div>
         </div>
 
-        <ul className="bv-static-list">
-          {STAY_INFO.map((item) => (
-            <li key={item.label}>
-              <span className="bv-icon" aria-hidden="true">
-                {item.icon}
-              </span>
-              <span>
-                <span className="bv-text-label">{item.label}</span>
-                <span className="bv-text-detail">{item.detail}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
+        {isMobile ? (
+          <div className="bv-rail-wrap">
+            <ul className="bv-rail" ref={railRef}>
+              {STAY_INFO.map((item, i) => (
+                <li
+                  key={item.label}
+                  ref={(el) => {
+                    railItemRefs.current[i] = el;
+                  }}
+                >
+                  <span className="bv-icon" aria-hidden="true">
+                    {item.icon}
+                  </span>
+                  <span>
+                    <span className="bv-text-label">{item.label}</span>
+                    <span className="bv-text-detail">{item.detail}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <div className="bv-rail-dots" aria-hidden="true">
+              {STAY_INFO.map((_, i) => (
+                <span
+                  key={i}
+                  className={`bv-rail-dot${i === railActive ? " is-active" : ""}`}
+                />
+              ))}
+            </div>
+          </div>
+        ) : (
+          <ul className="bv-static-list">
+            {STAY_INFO.map((item) => (
+              <li key={item.label}>
+                <span className="bv-icon" aria-hidden="true">
+                  {item.icon}
+                </span>
+                <span>
+                  <span className="bv-text-label">{item.label}</span>
+                  <span className="bv-text-detail">{item.detail}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
 
         <BookingBar />
       </section>
@@ -536,8 +668,8 @@ export default function HeroSection() {
         .bv-pin-inner { height: 100vh; height: 100dvh; overflow: hidden; }
         .bv-content {
           position: relative; z-index: 10; height: 100%;
-          display: flex; flex-direction: column; align-items: center; justify-content: center;
-          text-align: center; padding-bottom: clamp(96px, 22vh, 260px);
+          display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+          text-align: left; padding-bottom: clamp(96px, 22vh, 260px);
           width: fit-content; max-width: min(980px, 90vw); margin: 0 auto; will-change: transform;
         }
         .bv-ring-wrap {
