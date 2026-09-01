@@ -3,8 +3,8 @@
 // needs to change in one place.
 //
 // Photos: drop files into /public/rooms/<slug>/ as:
-//   cover.jpg        — used on the overview card
-//   1.jpg, 2.jpg, ... — used on the detail page gallery (count = galleryCount)
+//   cover.jpg        - used on the overview card
+//   1.jpg, 2.jpg, ... - used on the detail page gallery (count = galleryCount)
 // Until a photo exists at a given path, SafeImage renders a branded
 // placeholder instead of a broken image.
 
@@ -26,7 +26,7 @@ export type RoomType = {
   name: string;
   tag: string;
   unit: "/night" | "/head";
-  /** Standard rate — applies Friday–Sunday. */
+  /** Standard rate - applies Friday–Sunday. */
   weekendPrice: number;
   /** % off the weekend rate, Monday–Thursday. */
   weekdayDiscountPct: number;
@@ -90,7 +90,7 @@ export const ROOM_TYPES: RoomType[] = [
     summary:
       "Comfortable bunk beds with personal lockers, ideal for trekking groups and solo travelers alike.",
     description:
-      "Bright, budget-friendly bunks with personal lockers and a shared lounge — built for trekking groups, backpackers, and anyone happy to trade a private room for a few new travel stories.",
+      "Bright, budget-friendly bunks with personal lockers and a shared lounge - built for trekking groups, backpackers, and anyone happy to trade a private room for a few new travel stories.",
     amenities: [
       { label: "Personal Lockers", icon: "locker" },
       { label: "Shared Common Lounge", icon: "group" },

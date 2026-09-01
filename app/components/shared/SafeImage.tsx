@@ -9,7 +9,7 @@ type SafeImageProps = ImageProps & {
 };
 
 // Drop-in replacement for next/image. Real estates rarely have every photo
-// ready on day one — this renders a branded placeholder instead of a broken
+// ready on day one - this renders a branded placeholder instead of a broken
 // image icon whenever a src 404s, so the site never looks unfinished while
 // photos are still being uploaded to /public/rooms/<slug>/.
 export default function SafeImage({ fallbackLabel, alt, ...props }: SafeImageProps) {

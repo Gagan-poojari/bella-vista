@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* Bella Vista — coffee-estate palette */
+  /* Bella Vista - coffee-estate palette */
   --color-ink: #1e2a1d;
   /* deep forest bark, base background */
   --color-mist: #efede4;
@@ -104,7 +104,7 @@ html {
   background: var(--color-mist);
 }
 
-/* scoped variant for dark panels/modals sitting on the ink/bark surface —
+/* scoped variant for dark panels/modals sitting on the ink/bark surface -
    blends the track into the panel instead of leaving a mist-colored gutter
    cut into it. Add class="scrollbar-on-dark" to any scrollable dark block. */
 .scrollbar-on-dark {
