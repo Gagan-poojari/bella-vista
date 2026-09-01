@@ -169,7 +169,7 @@ export default function BookingBar() {
             />
 
             <div
-              className={`absolute bottom-[calc(100%+12px)] left-0 z-20 w-[560px] max-w-[90vw] rounded-2xl border border-husk/30 bg-mist p-5 shadow-[0_20px_45px_rgba(30,42,29,0.28)] transition-all duration-200 ease-out ${datesOpen
+              className={`absolute bottom-[calc(100%+12px)] left-0 z-20 w-140 max-w-[90vw] rounded-2xl border border-husk/30 bg-mist p-5 shadow-[0_20px_45px_rgba(30,42,29,0.28)] transition-all duration-200 ease-out ${datesOpen
                   ? "scale-100 translate-y-0 opacity-100"
                   : "pointer-events-none scale-95 translate-y-1.5 opacity-0"
                 }`}
@@ -192,10 +192,10 @@ export default function BookingBar() {
                 setGuestsOpen((v) => !v);
                 setDatesOpen(false);
               }}
-              className={`group flex w-full flex-col gap-1 border-r border-bark/10 px-5 py-3 text-left outline-none transition-colors focus-visible:ring-2 focus-visible:ring-husk focus-visible:ring-inset ${guestsOpen ? "bg-husk/10" : "hover:bg-husk/[0.08]"
+              className={`group flex w-full flex-col gap-1 border-r border-bark/10 px-5 py-3 text-left outline-none transition-colors focus-visible:ring-2 focus-visible:ring-husk focus-visible:ring-inset ${guestsOpen ? "bg-husk/10" : "hover:bg-husk/8"
                 }`}
             >
-              <span className="font-body text-[10.5px] font-semibold uppercase tracking-[0.1em] text-husk">
+              <span className="font-body text-[10.5px] font-semibold uppercase tracking-widest text-husk">
                 Guests
               </span>
               <span className="flex items-center justify-between font-body text-[14.5px] font-medium text-ink">
@@ -212,7 +212,7 @@ export default function BookingBar() {
             </button>
 
             <div
-              className={`absolute bottom-[calc(100%+12px)] left-0 w-[280px] origin-bottom-left rounded-2xl border border-husk/30 bg-mist p-4 shadow-[0_20px_45px_rgba(30,42,29,0.28)] transition-all duration-200 ease-out ${guestsOpen
+              className={`absolute bottom-[calc(100%+12px)] left-0 w-70 origin-bottom-left rounded-2xl border border-husk/30 bg-mist p-4 shadow-[0_20px_45px_rgba(30,42,29,0.28)] transition-all duration-200 ease-out ${guestsOpen
                   ? "scale-100 translate-y-0 opacity-100"
                   : "pointer-events-none scale-95 translate-y-1.5 opacity-0"
                 }`}
@@ -244,7 +244,7 @@ export default function BookingBar() {
             </div>
           </div>
 
-          <SearchButton disabled={!canSearch} className="rounded-[4px]" />
+          <SearchButton disabled={!canSearch} className="rounded-sm" />
         </div>
 
         {checkIn ? (
@@ -269,7 +269,7 @@ export default function BookingBar() {
             }`}
         >
           <span className="min-w-0">
-            <span className="block font-body text-[10px] font-semibold uppercase tracking-[0.1em] text-husk">
+            <span className="block font-body text-[10px] font-semibold uppercase tracking-widest text-husk">
               {checkIn ? summaryLabel : "Add dates"}
             </span>
             <span className="block truncate font-body text-[14.5px] font-medium text-ink">
@@ -454,7 +454,7 @@ function DatesPanel({
       </div>
 
       <div className="mt-3 flex items-center gap-1.5 border-t border-bark/10 px-1 pt-3">
-        <span className="h-[5px] w-[5px] rounded-full bg-husk" />
+        <span className="h-1.25 w-1.25 rounded-full bg-husk" />
         <span className="font-body text-[11px] text-bark/50">Mon–Thu nights include the weekday special</span>
       </div>
     </div>
@@ -491,7 +491,7 @@ function MonthGrid({
   const rangeEnd = checkOut || hoverISO;
 
   return (
-    <div key={`${year}-${month}`} className="bv-fade-in w-full min-w-[248px]">
+    <div key={`${year}-${month}`} className="bv-fade-in w-full min-w-62">
       <p className="mb-3 text-center font-body text-[13px] font-semibold text-ink">{monthLabel(base)}</p>
       <div className="mb-1.5 grid grid-cols-7 gap-y-1">
         {WEEKDAY_LABELS.map((w, i) => (
@@ -527,7 +527,7 @@ function MonthGrid({
             >
               {day}
               {isWeekdaySpecial && !disabled && !isStart && !isEnd && (
-                <span className="absolute bottom-0.5 h-[3px] w-[3px] rounded-full bg-husk" />
+                <span className="absolute bottom-0.5 h-0.75 w-0.75 rounded-full bg-husk" />
               )}
             </button>
           );
@@ -568,9 +568,9 @@ function DateTrigger({
       type="button"
       onClick={onOpen}
       className={`group flex w-full flex-col gap-1 text-left outline-none transition-colors focus-visible:ring-2 focus-visible:ring-husk focus-visible:ring-inset ${bare ? "px-4 py-3" : "border-r border-bark/10 px-5 py-3"
-        } ${active ? "bg-husk/10" : "hover:bg-husk/[0.08]"}`}
+        } ${active ? "bg-husk/10" : "hover:bg-husk/8"}`}
     >
-      <span className="flex items-center gap-1.5 font-body text-[10.5px] font-semibold uppercase tracking-[0.1em] text-[#8f5300]">
+      <span className="flex items-center gap-1.5 font-body text-[10.5px] font-semibold uppercase tracking-widest text-[#8f5300]">
         <CalendarGlyph className="h-3 w-3 opacity-70" />
         {label}
       </span>
@@ -602,7 +602,7 @@ function SearchButton({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className={`group relative col-span-1 flex items-center justify-center gap-2 overflow-hidden bg-ink px-8 py-3.5 font-body text-[14.5px] font-semibold text-mist transition-all duration-200 cursor-pointer hover:bg-[#8d6700] hover:shadow-[0_12px_28px_rgba(30,42,29,0.35)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-husk disabled:pointer-events-none disabled:translate-y-0 disabled:opacity-40 disabled:shadow-none ${className}`}
+      className={`group relative col-span-1 flex items-center justify-center gap-2 overflow-hidden bg-ink px-8 py-3.5 font-body text-[14.5px] font-semibold text-mist transition-all duration-200 cursor-pointer hover:bg-[#8d6700] hover:shadow-[0_12px_28px_rgba(30,42,29,0.35)] focus-visible:outline focus-visible:outline-husk disabled:pointer-events-none disabled:translate-y-0 disabled:opacity-40 disabled:shadow-none ${className}`}
     >
       <span className="pointer-events-none absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-mist/25 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
       <span className="relative">Check Availability</span>
@@ -637,7 +637,7 @@ function GuestRow({
           disabled={value <= min}
           onClick={onDecrease}
           aria-label={`Fewer ${label.toLowerCase()}`}
-          className="flex h-[30px] w-[30px] items-center justify-center rounded-full border border-husk/50 text-husk transition-colors active:scale-95 hover:enabled:bg-husk/10 disabled:opacity-30"
+          className="flex h-7.5 w-7.5 items-center justify-center rounded-full border border-husk/50 text-husk transition-colors active:scale-95 hover:enabled:bg-husk/10 disabled:opacity-30"
         >
           −
         </button>
@@ -648,7 +648,7 @@ function GuestRow({
           type="button"
           onClick={onIncrease}
           aria-label={`More ${label.toLowerCase()}`}
-          className="flex h-[30px] w-[30px] items-center justify-center rounded-full border border-husk/50 text-husk transition-colors active:scale-95 hover:bg-husk/10"
+          className="flex h-7.5 w-7.5 items-center justify-center rounded-full border border-husk/50 text-husk transition-colors active:scale-95 hover:bg-husk/10"
         >
           +
         </button>

@@ -362,7 +362,7 @@ export default function RoomsOverview() {
           </svg>
 
           {/* The map */}
-          <div className="relative aspect-[5/4] overflow-hidden rounded-[26px] border border-bark/10 bg-white/40 shadow-[0_20px_50px_rgba(30,42,29,0.1)] sm:aspect-[16/11]">
+          <div className="relative aspect-5/4 overflow-hidden rounded-[26px] border border-bark/10 bg-white/40 shadow-[0_20px_50px_rgba(30,42,29,0.1)] sm:aspect-16/11">
             <svg
               className="absolute inset-0 h-full w-full"
               viewBox="0 0 100 100"
@@ -431,7 +431,7 @@ export default function RoomsOverview() {
             <p className="font-body text-[13px] text-husk">{activeRoom.name}</p>
 
             <div
-              className="relative mt-5 aspect-[4/3] w-[62%] self-start overflow-hidden rounded-lg shadow-[0_14px_30px_rgba(30,42,29,0.22)]"
+              className="relative mt-5 aspect-4/3 w-[62%] self-start overflow-hidden rounded-lg shadow-[0_14px_30px_rgba(30,42,29,0.22)]"
               style={{ transform: "rotate(-1.5deg)" }}
             >
               <span className="rm-tape" aria-hidden="true" />
@@ -459,16 +459,16 @@ export default function RoomsOverview() {
                 <span className="ml-1 font-body text-[12px] font-normal text-ink/50">{activeRoom.unit}</span>
               </p>
 
-              <div className="relative ml-auto flex rounded-full border border-bark/15 bg-bark/[0.04] p-0.5">
+              <div className="relative ml-auto flex rounded-full border border-bark/15 bg-bark/4 p-0.5">
                 <span
-                  className="rm-toggle-thumb absolute inset-y-0.5 w-[58px] rounded-full bg-white shadow-sm"
+                  className="rm-toggle-thumb absolute inset-y-0.5 w-14.5 rounded-full bg-white shadow-sm"
                   style={{ transform: rateMode === "weekend" ? "translateX(0)" : "translateX(58px)" }}
                 />
                 {(["weekend", "weekday"] as const).map((mode) => (
                   <button
                     key={mode}
                     onClick={() => setRateMode(mode)}
-                    className="relative z-10 w-[58px] rounded-full py-1.5 font-body text-[10.5px] font-medium capitalize text-ink/70"
+                    className="relative z-10 w-14.5 rounded-full py-1.5 font-body text-[10.5px] font-medium capitalize text-ink/70"
                   >
                     {mode}
                   </button>

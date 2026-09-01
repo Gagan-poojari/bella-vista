@@ -139,15 +139,15 @@ export default function GuestVoices() {
           soft, ambient, unlike the grain/lines used elsewhere on the page. */}
       <div className="pointer-events-none absolute inset-0">
         <div
-          className="gv-blob gv-blob-1 -left-24 top-0 h-[420px] w-[420px] opacity-30"
+          className="gv-blob gv-blob-1 -left-24 top-0 h-105 w-105 opacity-30"
           style={{ background: "radial-gradient(closest-side, rgba(201,160,92,0.45), transparent 72%)" }}
         />
         <div
-          className="gv-blob gv-blob-2 right-[-10%] top-1/4 h-[480px] w-[480px] opacity-25"
+          className="gv-blob gv-blob-2 right-[-10%] top-1/4 h-120 w-120 opacity-25"
           style={{ background: "radial-gradient(closest-side, rgba(122,150,110,0.4), transparent 72%)" }}
         />
         <div
-          className="gv-blob gv-blob-3 left-1/3 bottom-[-15%] h-[380px] w-[380px] opacity-20"
+          className="gv-blob gv-blob-3 left-1/3 bottom-[-15%] h-95 w-95 opacity-20"
           style={{ background: "radial-gradient(closest-side, rgba(242,237,225,0.3), transparent 72%)" }}
         />
       </div>
@@ -169,13 +169,13 @@ export default function GuestVoices() {
 
         <div data-reveal className="relative mt-16 sm:mt-20">
           <span
-            className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 select-none font-display text-[220px] leading-none text-mist/[0.06] sm:-top-20"
+            className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 select-none font-display text-[220px] leading-none text-mist/6 sm:-top-20"
             aria-hidden="true"
           >
             &rdquo;
           </span>
 
-          <div className="relative min-h-[180px] text-center sm:min-h-[150px]">
+          <div className="relative min-h-45 text-center sm:min-h-37.5">
             <div className={`gv-quote ${entering ? "is-in" : "is-out"}`}>
               <div className="flex justify-center gap-1 text-husk">
                 {Array.from({ length: 5 }).map((_, s) => (

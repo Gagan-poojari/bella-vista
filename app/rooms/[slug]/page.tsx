@@ -135,7 +135,7 @@ export default async function RoomDetailPage({ params }: PageProps<"/rooms/[slug
                 {room.name}
               </h1>
 
-              <div className="relative mt-6 aspect-[4/3] w-full overflow-hidden rounded-3xl bg-bark shadow-[0_20px_50px_rgba(30,42,29,0.18)]">
+              <div className="relative mt-6 aspect-4/3 w-full overflow-hidden rounded-3xl bg-bark shadow-[0_20px_50px_rgba(30,42,29,0.18)]">
                 <SafeImage
                   src={gallery[0]}
                   alt={room.name}

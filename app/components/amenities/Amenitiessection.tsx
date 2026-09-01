@@ -213,7 +213,7 @@ export default function AmenitiesSection() {
                 style={{ transform: `translateY(${OFFSET_Y[i]}px)` }}
               >
                 <div
-                  className="am-sign relative w-full max-w-[280px] rounded-2xl border border-bark/10 bg-white px-6 pb-7 pt-8 shadow-[0_14px_32px_rgba(30,42,29,0.09)]"
+                  className="am-sign relative w-full max-w-70 rounded-2xl border border-bark/10 bg-white px-6 pb-7 pt-8 shadow-[0_14px_32px_rgba(30,42,29,0.09)]"
                   style={{ transform: `rotate(${ROTATE[i]}deg)` }}
                 >
                   <span className="am-icon inline-flex text-husk [&_svg]:h-9 [&_svg]:w-9">

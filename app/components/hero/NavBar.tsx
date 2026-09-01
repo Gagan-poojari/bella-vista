@@ -262,7 +262,7 @@ export default function Navbar() {
             <button
               ref={menuButtonRef}
               type="button"
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-bark/20 bg-mist/60 transition-colors hover:bg-mist active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c49b4a] md:hidden"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-bark/20 bg-mist/60 transition-colors hover:bg-mist active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c49b4a] md:hidden"
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
               aria-controls="mobile-nav-panel"

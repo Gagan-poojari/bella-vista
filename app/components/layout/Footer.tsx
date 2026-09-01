@@ -70,7 +70,7 @@ export default function Footer() {
       />
 
       {/* golden hairline seam along the very top edge */}
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-husk/60 to-transparent" />
+      <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-husk/60 to-transparent" />
 
       <div className="relative mx-auto max-w-6xl px-6 pb-10 pt-16 sm:px-8 sm:pt-20">
         {/* Brand + newsletter */}
@@ -97,7 +97,7 @@ export default function Footer() {
               Seasonal notes on coffee, weather, and what&apos;s blooming
               &mdash; a few times a year, never more.
             </p>
-            <div className="mt-4 flex items-center gap-1.5 rounded-full border border-mist/15 bg-mist/[0.04] p-1.5 transition-colors focus-within:border-husk/60">
+            <div className="mt-4 flex items-center gap-1.5 rounded-full border border-mist/15 bg-mist/4 p-1.5 transition-colors focus-within:border-husk/60">
               <label htmlFor="footer-email" className="sr-only">
                 Email address
               </label>
