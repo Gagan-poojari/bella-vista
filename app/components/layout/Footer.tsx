@@ -1,3 +1,5 @@
+"use client"; 
+
 import Image from "next/image";
 import Link from "next/link";
 import { ROOM_TYPES } from "../../lib/rooms";
@@ -206,8 +208,14 @@ export default function Footer() {
             © {new Date().getFullYear()} Bella Vista Homestay. Nestled in the
             heart of Chikkamagaluru.
           </p>
-          <Link
-            href="#"
+          <button
+            type="button"
+            onClick={() => {
+              window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+              });
+            }}
             className="group flex items-center gap-2 rounded-full border border-mist/15 px-4 py-2 font-body text-[12px] text-mist/60 transition-colors hover:border-husk/50 hover:text-husk"
           >
             Back to top
@@ -220,7 +228,7 @@ export default function Footer() {
                 strokeLinejoin="round"
               />
             </svg>
-          </Link>
+          </button>
         </div>
       </div>
     </footer>

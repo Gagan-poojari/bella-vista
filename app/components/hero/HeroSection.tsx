@@ -279,6 +279,7 @@ export default function HeroSection() {
   const railRef = useRef<HTMLUListElement>(null);
   const railItemRefs = useRef<(HTMLLIElement | null)[]>([]);
   const [railActive, setRailActive] = useState(0);
+  const mobileBgRef = useRef<HTMLDivElement>(null);
 
   // Detect reduced-motion preference once on mount, and keep it in sync if
   // the user changes it mid-session. Starts as `null` (not "false") so the
@@ -333,6 +334,48 @@ export default function HeroSection() {
     items.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, [reducedMotion, isMobile]);
+
+  // A single one-time nudge - not a loop - so the rail's swipeability is
+  // obvious at a glance without resorting to a persistent "swipe me" icon
+  // or a decorative animation that never stops.
+  useEffect(() => {
+    if (!isMobile || reducedMotion) return;
+    const rail = railRef.current;
+    if (!rail) return;
+    const nudgeOut = setTimeout(() => {
+      rail.scrollTo({ left: 46, behavior: "smooth" });
+    }, 1500);
+    const nudgeBack = setTimeout(() => {
+      rail.scrollTo({ left: 0, behavior: "smooth" });
+    }, 2100);
+    return () => {
+      clearTimeout(nudgeOut);
+      clearTimeout(nudgeBack);
+    };
+  }, [isMobile, reducedMotion]);
+
+  // A light, cheap scroll parallax for the mobile hero image - genuinely
+  // responds to the person's own scrolling rather than looping on its own,
+  // and is nowhere near the desktop rig's complexity (one passive listener,
+  // one direct transform write, no layout reads to force a reflow).
+  useEffect(() => {
+    if (!isMobile || reducedMotion) return;
+    const bg = mobileBgRef.current;
+    if (!bg) return;
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = Math.min(window.scrollY * 0.12, 60);
+        bg.style.transform = `translateY(${y}px) scale(1.06)`;
+        ticking = false;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isMobile, reducedMotion]);
 
   useEffect(() => {
     if (reducedMotion !== false || isMobile !== false) return; // only run the scroll rig for desktop, motion-ok users
@@ -511,6 +554,7 @@ export default function HeroSection() {
           ${SHARED_STYLES}
           .bv-hero-frame { position: relative; height: 100dvh; overflow: hidden; }
           .bv-static-hero .bv-bg {
+            will-change: transform;
             /* Deliberately NOT position:fixed here, unlike the desktop
                background - fixed positioning combined with mobile browser
                chrome (address bar show/hide) and on-screen keyboards
@@ -526,6 +570,12 @@ export default function HeroSection() {
           }
           .bv-static-hero .bv-scroll-cue { bottom: 28px; }
 
+          .bv-static-content--mobile {
+            justify-content: flex-start;
+            padding-top: clamp(64px, 15vh, 130px);
+          }
+          .bv-static-content--mobile .bv-tagline { color: rgba(242,237,225,0.86); }
+
           .bv-static-list {
             position: relative; z-index: 1;
             list-style: none; margin: 0; padding: 48px 24px;
@@ -538,53 +588,91 @@ export default function HeroSection() {
             padding: 16px; border-radius: 10px;
             background: rgba(239,237,228,0.05); border: 1px solid rgba(201,160,92,0.25);
           }
-
-          /* Mobile: the same "explore the stay details" idea as the desktop
-             ring, translated into an interaction phones already know -
-             swipe a strip of cards, with dots tracking where you are.
-             Native CSS scroll-snap, no JS drives the motion itself. */
-          .bv-rail-wrap { position: relative; z-index: 1; background: #1a251c; padding: 30px 0 26px; }
-          .bv-rail {
-            display: flex; gap: 14px; margin: 0; padding: 4px 24px 6px;
-            list-style: none; overflow-x: auto; overscroll-behavior-x: contain;
-            scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-          }
-          .bv-rail::-webkit-scrollbar { display: none; }
-          .bv-rail li {
-            scroll-snap-align: start; flex: 0 0 auto; width: min(74vw, 280px);
-            display: flex; align-items: center; gap: 14px;
-            padding: 16px; border-radius: 14px;
-            background: rgba(239,237,228,0.05); border: 1px solid rgba(201,160,92,0.25);
-          }
-          .bv-rail-dots { display: flex; justify-content: center; gap: 7px; margin-top: 14px; }
-          .bv-rail-dot {
-            width: 6px; height: 6px; border-radius: 50%;
-            background: rgba(239,237,228,0.25);
-            transition: background .25s, transform .25s;
-          }
-          .bv-rail-dot.is-active { background: var(--color-husk); transform: scale(1.4); }
-
-          .bv-static-list .bv-icon, .bv-rail .bv-icon {
+          .bv-static-list .bv-icon {
             width: 38px; height: 38px; flex-shrink: 0; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             border: 1px solid rgba(201,160,92,0.4); color: var(--color-husk);
           }
-          .bv-static-list .bv-icon svg, .bv-rail .bv-icon svg { width: 18px; height: 18px; }
-          .bv-static-list .bv-text-label, .bv-rail .bv-text-label {
+          .bv-static-list .bv-icon svg { width: 18px; height: 18px; }
+          .bv-static-list .bv-text-label {
             display: block; font-family: var(--font-body); font-weight: 600;
             font-size: 14px; color: var(--color-mist);
           }
-          .bv-static-list .bv-text-detail, .bv-rail .bv-text-detail {
+          .bv-static-list .bv-text-detail {
             display: block; font-family: var(--font-body); font-size: 12.5px;
             color: rgba(239,237,228,0.72); margin-top: 2px;
           }
+
+          /* Mobile: STAY_INFO as a glass shelf living inside the hero frame
+             itself, right above the booking bar - the same "explore while
+             still looking at the view" idea as the desktop annulus, just
+             translated into a swipe instead of a scroll-driven rotation.
+             Nothing here scrolls the page; it's all native horizontal
+             scroll-snap plus one settle-in entrance, no loops. */
+          .bv-info-shelf {
+            position: absolute; left: 14px; right: 14px; z-index: 12;
+            bottom: calc(100px + env(safe-area-inset-bottom, 0px));
+            border-radius: 24px; overflow: hidden;
+            padding: 16px 0 14px;
+            opacity: 0; animation: bv-mist-in 1s cubic-bezier(.19,.75,.24,1) 1.15s forwards;
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .bv-info-shelf { animation: none; opacity: 1; }
+          }
+          .bv-info-eyebrow {
+            margin: 0; padding: 0 20px 10px; font-family: var(--font-body);
+            font-size: 10.5px; font-weight: 600; letter-spacing: 0.14em;
+            text-transform: uppercase; color: rgba(207,168,99,0.92);
+          }
+          .bv-info-rail {
+            display: flex; gap: 12px; margin: 0; padding: 2px 20px 4px; list-style: none;
+            overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch; scrollbar-width: none;
+          }
+          .bv-info-rail::-webkit-scrollbar { display: none; }
+          .bv-info-card {
+            scroll-snap-align: start; flex: 0 0 auto; width: 158px;
+            display: flex; flex-direction: column; gap: 8px;
+            padding: 14px; border-radius: 16px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+            opacity: 0.62; transform: scale(0.93);
+            transition: transform .4s cubic-bezier(.2,.8,.2,1), opacity .4s,
+                        box-shadow .4s, border-color .4s, background .4s;
+          }
+          .bv-info-card:active { transform: scale(0.9); }
+          .bv-info-card.is-active {
+            opacity: 1; transform: scale(1);
+            border-color: rgba(207,168,99,0.55);
+            background: linear-gradient(160deg, rgba(207,168,99,0.2), rgba(255,255,255,0.04));
+            box-shadow: 0 8px 26px rgba(207,168,99,0.22), inset 0 1px 0 rgba(255,255,255,0.2);
+          }
+          .bv-info-icon {
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(207,168,99,0.45); color: var(--color-husk);
+            background: rgba(0,0,0,0.18);
+          }
+          .bv-info-icon svg { width: 15px; height: 15px; }
+          .bv-info-label {
+            display: block; font-family: var(--font-body); font-weight: 600;
+            font-size: 13px; color: var(--color-mist);
+          }
+          .bv-info-detail {
+            display: block; font-family: var(--font-body); font-size: 11px;
+            color: rgba(242,237,225,0.76); margin-top: 2px;
+          }
+          .bv-info-dots { display: flex; justify-content: center; gap: 6px; margin-top: 12px; }
+          .bv-info-dot {
+            width: 5px; height: 5px; border-radius: 3px; background: rgba(255,255,255,0.28);
+            transition: width .3s, background .3s;
+          }
+          .bv-info-dot.is-active { width: 16px; background: var(--color-husk); }
 
           /* Phones: the desktop clamps bottom out at sizes still tuned for
              a much wider canvas. Give the hero its own scale instead of
              inheriting the desktop's floor. */
           @media (max-width: 640px) {
-            .bv-static-content { padding: 20px; }
+            .bv-static-content { padding-left: 20px; padding-right: 20px; padding-bottom: 20px; }
             .bv-static-content h1 { font-size: clamp(34px, 10.5vw, 48px); }
             .bv-static-content .bv-tagline { font-size: 14.5px; max-width: 30ch; }
             .bv-offer { margin-top: 22px; padding: 8px 20px 8px 8px; gap: 12px; }
@@ -595,9 +683,9 @@ export default function HeroSection() {
         `}</style>
 
         <div className="bv-hero-frame">
-          <div className="bv-bg">
-            <div className="bv-static-content">
-              <HeroCopy />
+          <div className="bv-bg" ref={mobileBgRef}>
+            <div className={`bv-static-content${isMobile ? " bv-static-content--mobile" : ""}`}>
+              <HeroCopy animated={isMobile && !reducedMotion} />
             </div>
             <span className="bv-scroll-cue" aria-hidden="true">
               <span className="bv-scroll-cue-text">Scroll to explore</span>
@@ -606,38 +694,42 @@ export default function HeroSection() {
               </span>
             </span>
           </div>
+
+          {isMobile && (
+            <div className="bv-info-shelf">
+              <p className="bv-info-eyebrow">Stay details</p>
+              <ul className="bv-info-rail" ref={railRef}>
+                {STAY_INFO.map((item, i) => (
+                  <li
+                    key={item.label}
+                    ref={(el) => {
+                      railItemRefs.current[i] = el;
+                    }}
+                    className={`bv-info-card${i === railActive ? " is-active" : ""}`}
+                  >
+                    <span className="bv-info-icon" aria-hidden="true">
+                      {item.icon}
+                    </span>
+                    <span>
+                      <span className="bv-info-label">{item.label}</span>
+                      <span className="bv-info-detail">{item.detail}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <div className="bv-info-dots" aria-hidden="true">
+                {STAY_INFO.map((_, i) => (
+                  <span
+                    key={i}
+                    className={`bv-info-dot${i === railActive ? " is-active" : ""}`}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
-        {isMobile ? (
-          <div className="bv-rail-wrap">
-            <ul className="bv-rail" ref={railRef}>
-              {STAY_INFO.map((item, i) => (
-                <li
-                  key={item.label}
-                  ref={(el) => {
-                    railItemRefs.current[i] = el;
-                  }}
-                >
-                  <span className="bv-icon" aria-hidden="true">
-                    {item.icon}
-                  </span>
-                  <span>
-                    <span className="bv-text-label">{item.label}</span>
-                    <span className="bv-text-detail">{item.detail}</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <div className="bv-rail-dots" aria-hidden="true">
-              {STAY_INFO.map((_, i) => (
-                <span
-                  key={i}
-                  className={`bv-rail-dot${i === railActive ? " is-active" : ""}`}
-                />
-              ))}
-            </div>
-          </div>
-        ) : (
+        {!isMobile && (
           <ul className="bv-static-list">
             {STAY_INFO.map((item) => (
               <li key={item.label}>
@@ -668,7 +760,7 @@ export default function HeroSection() {
         .bv-pin-inner { height: 100vh; height: 100dvh; overflow: hidden; }
         .bv-content {
           position: relative; z-index: 10; height: 100%;
-          display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+          display: flex; flex-direction: column; align-items: center; justify-content: center;
           text-align: left; padding-bottom: clamp(96px, 22vh, 260px);
           width: fit-content; max-width: min(980px, 90vw); margin: 0 auto; will-change: transform;
         }

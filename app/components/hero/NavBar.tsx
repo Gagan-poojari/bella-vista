@@ -320,7 +320,7 @@ export default function Navbar() {
         aria-modal="true"
         aria-hidden={!open}
         style={{ top: "calc(76px + env(safe-area-inset-top))" }}
-        className={`fixed left-1/2 z-1002 w-[min(90vw,320px)] -translate-x-1/2 rounded-3xl border border-bark/10 bg-mist/95 p-3 shadow-[0_20px_50px_rgba(30,42,29,0.3)] backdrop-blur-xl transition-all duration-300 md:hidden ${
+        className={`fixed left-1/2 z-1002 w-[min(90vw,320px)] -translate-x-1/2 rounded-3xl border border-bark/10 bg-mist/95 p-3 pl-0 shadow-[0_20px_50px_rgba(30,42,29,0.3)] backdrop-blur-xl transition-all duration-300 md:hidden ${
           open ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-3 opacity-0"
         }`}
       >
