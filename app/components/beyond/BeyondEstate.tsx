@@ -304,7 +304,7 @@ export default function BeyondEstate() {
                   className={`rounded-full px-3 py-1 font-body text-[11.5px] font-medium transition-all ${
                     value === preset.val
                       ? "bg-ink text-mist shadow-xs"
-                      : "border border-bark/15 bg-bark/[0.04] text-ink/70 hover:border-husk hover:text-ink"
+                      : "border border-bark/15 bg-bark/4 text-ink/70 hover:border-husk hover:text-ink"
                   }`}
                 >
                   {preset.label}
@@ -326,7 +326,7 @@ export default function BeyondEstate() {
               <div
                 key={stop.name}
                 data-locked={locked}
-                className="be-stop relative w-[250px] flex-shrink-0 overflow-hidden rounded-2xl bg-bark"
+                className="be-stop relative w-62.5 shrink-0 overflow-hidden rounded-2xl bg-bark"
                 style={{ aspectRatio: "4 / 5" }}
               >
                 <SafeImage
@@ -337,7 +337,7 @@ export default function BeyondEstate() {
                   className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
                   fallbackLabel=""
                 />
-                <span className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-ink/95 via-ink/40 to-transparent" />
+                <span className="absolute inset-x-0 bottom-0 h-3/4 bg-linear-to-t from-ink/95 via-ink/40 to-transparent" />
 
                 <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
                   <span className="inline-block rounded-full bg-husk/25 px-2.5 py-0.5 font-body text-[10px] font-semibold uppercase tracking-[0.14em] text-husk backdrop-blur-sm">
