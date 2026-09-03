@@ -16,19 +16,19 @@ const ARTICLES: Article[] = [
     slug: "ultimate-chikkamagaluru-travel-guide-2026",
     title: "The Ultimate Chikkamagaluru Travel Guide 2026",
     excerpt: "Everything you need to plan the perfect itinerary in the coffee land of...",
-    image: "/journal/travel-guide.jpg",
+    image: "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=80",
   },
   {
     slug: "why-mp-nagar-is-the-strategic-base",
     title: "Why MP Nagar Is the Strategic Base for Heritage Lovers",
     excerpt: "Avoid the city traffic and stay connected to major highways leading to Belur and...",
-    image: "/journal/mp-nagar.jpg",
+    image: "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=900&q=80",
   },
   {
     slug: "bean-to-cup-slow-travel-guide",
     title: "Bean-to-Cup: The Slow Travel Guide",
     excerpt: "Immerse yourself in the rich history and process of coffee cultivation right from our...",
-    image: "/journal/bean-to-cup.jpg",
+    image: "https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=900&q=80",
   },
 ];
 

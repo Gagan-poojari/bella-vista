@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import SafeImage from "../shared/SafeImage";
 
 type Stop = {
@@ -18,35 +18,35 @@ const STOPS: Stop[] = [
     name: "Right Here",
     distance: "On the estate",
     description: "Coffee walks and the view from your own deck.",
-    image: "/beyond/estate.jpg",
+    image: "https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&w=900&q=80",
   },
   {
     time: 10,
     name: "Hirekolale Lake",
     distance: "3.5 km away",
     description: "Sunset views where the water mirrors the sky.",
-    image: "/beyond/hirekolale.jpg",
+    image: "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=80",
   },
   {
     time: 25,
     name: "Jhari Waterfalls",
     distance: "12 km away",
     description: "Cascades reached by a short jeep ride through the estates.",
-    image: "/beyond/jhari.jpg",
+    image: "https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=900&q=80",
   },
   {
     time: 45,
     name: "Belur & Halebidu",
     distance: "45 min drive",
     description: "Hoysala temple carvings, centuries deep.",
-    image: "/beyond/belur.jpg",
+    image: "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=900&q=80",
   },
   {
     time: 90,
     name: "Mullayanagiri Peak",
     distance: "90 min drive",
     description: "Karnataka's highest point, above the clouds.",
-    image: "/beyond/mullayanagiri.jpg",
+    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=80",
   },
 ];
 
@@ -61,7 +61,12 @@ function moodFor(value: number) {
 
 export default function BeyondEstate() {
   const [value, setValue] = useState(45);
+  const scrollerRef = useRef<HTMLDivElement>(null);
   const trackPct = (value / MAX_MIN) * 100;
+
+  function scrollStops(direction: number) {
+    scrollerRef.current?.scrollBy({ left: direction * 320, behavior: "smooth" });
+  }
 
   const ticks = useMemo(
     () => STOPS.map((s) => ({ ...s, pct: (s.time / MAX_MIN) * 100 })),
@@ -210,6 +215,7 @@ export default function BeyondEstate() {
         }
         @media (prefers-reduced-motion: reduce) { .be-stop { transition: none; } }
 
+        .be-scroller { scrollbar-width: none; }
         .be-scroller::-webkit-scrollbar { display: none; }
       `}</style>
 
@@ -319,7 +325,20 @@ export default function BeyondEstate() {
         </div>
 
         {/* Reachable stops cards */}
-        <div className="be-scroller mt-10 flex gap-5 overflow-x-auto pb-6 pt-2">
+        <div className="mt-10 flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => scrollStops(-1)}
+            aria-label="Show previous places"
+            title="Previous places"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-bark/20 bg-white/75 text-ink shadow-sm transition-colors hover:border-husk hover:text-husk"
+          >
+            <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4">
+              <path d="m12.5 4.5-5 5 5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+
+          <div ref={scrollerRef} className="be-scroller flex min-w-0 gap-5 overflow-x-auto pb-6 pt-2">
           {STOPS.map((stop) => {
             const locked = stop.time > value;
             return (
@@ -367,6 +386,19 @@ export default function BeyondEstate() {
               </div>
             );
           })}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => scrollStops(1)}
+            aria-label="Show more places"
+            title="More places"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-bark/20 bg-white/75 text-ink shadow-sm transition-colors hover:border-husk hover:text-husk"
+          >
+            <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4">
+              <path d="m7.5 4.5 5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
         </div>
       </div>
     </section>

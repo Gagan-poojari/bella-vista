@@ -108,10 +108,6 @@ export default async function RoomDetailPage({ params }: PageProps<"/rooms/[slug
   const room = getRoomBySlug(slug);
   if (!room) notFound();
 
-  const gallery = Array.from(
-    { length: room.galleryCount },
-    (_, i) => `/rooms/${room.slug}/${i + 1}.jpg`
-  );
   const placeName = PLACE_NAMES[room.slug];
 
   return (
@@ -152,7 +148,7 @@ export default async function RoomDetailPage({ params }: PageProps<"/rooms/[slug
               <p className="mt-1 font-body text-[12.5px] font-medium text-husk">{room.tag}</p>
 
               <div className="mt-6">
-                <RoomGallery images={gallery} name={room.name} comingSoon={room.comingSoon} />
+                <RoomGallery images={room.gallery} name={room.name} comingSoon={room.comingSoon} />
               </div>
 
               <p className="mt-8 max-w-2xl font-body text-[15px] leading-relaxed text-ink/70">

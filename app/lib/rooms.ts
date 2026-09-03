@@ -4,7 +4,7 @@
 //
 // Photos: drop files into /public/rooms/<slug>/ as:
 //   cover.jpg        - used on the overview card
-//   1.jpg, 2.jpg, ... - used on the detail page gallery (count = galleryCount)
+//   1.jpg, 2.jpg, ... - used on the detail page gallery
 // Until a photo exists at a given path, SafeImage renders a branded
 // placeholder instead of a broken image.
 
@@ -35,8 +35,8 @@ export type RoomType = {
   /** Longer copy for the detail page. */
   description: string;
   amenities: Amenity[];
-  /** How many numbered gallery photos to expect in /public/rooms/<slug>/. */
-  galleryCount: number;
+  /** Image URLs used on the detail page gallery. */
+  gallery: string[];
   /** True while no real photos exist yet for this room. */
   comingSoon?: boolean;
 };
@@ -59,7 +59,17 @@ export const ROOM_TYPES: RoomType[] = [
       { label: "Scenic Valley Views", icon: "view" },
       { label: "Smart Entertainment", icon: "tv" },
     ],
-    galleryCount: 5,
+    gallery: [
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7602.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7615.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7617.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7620.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7614.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7619.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7627.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7624.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7628.JPG.jpeg"
+    ],
   },
   {
     slug: "2bhk-villa",
@@ -78,7 +88,9 @@ export const ROOM_TYPES: RoomType[] = [
       { label: "High-Speed WiFi", icon: "wifi" },
       { label: "Scenic Valley Views", icon: "view" },
     ],
-    galleryCount: 5,
+    gallery: [
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7626.JPG.jpeg",
+    ],
   },
   {
     slug: "dormitory",
@@ -97,7 +109,26 @@ export const ROOM_TYPES: RoomType[] = [
       { label: "High-Speed WiFi", icon: "wifi" },
       { label: "Hot Showers", icon: "shower" },
     ],
-    galleryCount: 3,
+    gallery: [
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7590.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7574.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7588.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7589.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7569.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7573.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7572.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7567.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7575.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7568.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7593.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7584.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7578.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7579.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7585.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7580.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7601.JPG.jpeg",
+      "https://ik.imagekit.io/zfllu3tqb/DSCF7605.JPG.jpeg"
+    ],
     comingSoon: true,
   },
 ];
