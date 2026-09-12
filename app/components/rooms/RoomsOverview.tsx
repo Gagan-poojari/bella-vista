@@ -16,19 +16,19 @@ import { ROOM_TYPES, weekdayPrice, type Amenity, type AmenityIcon } from "../../
 // concept, not room data, so it lives here rather than in lib/rooms.
 const MAP_META: Record<string, { top: number; left: number; place: string; note: string }> = {
   "1bhk-cottage": {
-    top: 22,
-    left: 66,
+    top: 24,
+    left: 68,
     place: "North Ridge",
     note: "Furthest from the gate, closest to the clouds.",
   },
   "2bhk-villa": {
-    top: 54,
-    left: 32,
+    top: 52,
+    left: 36,
     place: "The Hollow",
     note: "Where the valley opens up right below the deck.",
   },
   dormitory: {
-    top: 80,
+    top: 78,
     left: 70,
     place: "Trail's End",
     note: "Steps from the trekking path - bunks, lockers, and new friends.",
@@ -36,7 +36,31 @@ const MAP_META: Record<string, { top: number; left: number; place: string; note:
 };
 
 const TRAIL_PATH =
-  "M66,22 C55,32 45,39 32,54 C39,65 55,71 70,80";
+  "M18,88 C26,80 38,76 48,70 C42,62 38,58 36,52 C26,42 22,34 20,26 C38,18 54,18 68,24 C78,35 78,65 70,78";
+
+const ROOM_ICONS: Record<string, React.ReactNode> = {
+  "1bhk-cottage": (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="h-3.5 w-3.5">
+      <path d="M3 10.5L12 3l9 7.5" />
+      <path d="M5 9v11h14V9" />
+      <path d="M9 20v-6h6v6" />
+    </svg>
+  ),
+  "2bhk-villa": (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="h-3.5 w-3.5">
+      <path d="M2 11l10-8 10 8" />
+      <path d="M4 10v10h16V10" />
+      <rect x="9" y="13" width="6" height="7" />
+      <path d="M14 6.5V3h3v5.5" />
+    </svg>
+  ),
+  dormitory: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="h-3.5 w-3.5">
+      <path d="M2 6h20M2 18h20M4 6v14M20 6v14M4 12h16" />
+      <path d="M7 6v6M17 6v6" />
+    </svg>
+  ),
+};
 
 function useCountUp(value: number, durationMs: number, enabled: boolean) {
   const [display, setDisplay] = useState(value);
@@ -339,10 +363,49 @@ export default function RoomsOverview() {
           </h2>
         </div>
 
+        {/* Room Quick-Select Switcher Tabs */}
+        <div className="mt-8 flex flex-wrap items-center gap-2.5 sm:gap-3">
+          <span className="hidden font-body text-[11px] font-semibold uppercase tracking-[0.16em] text-husk sm:inline-block">
+            Browse by Stay:
+          </span>
+          {ROOM_TYPES.map((room) => {
+            const isActive = room.slug === activeSlug;
+            const price = rateMode === "weekend" ? room.weekendPrice : weekdayPrice(room);
+            return (
+              <button
+                key={room.slug}
+                type="button"
+                onClick={() => setActiveSlug(room.slug)}
+                className={`group flex cursor-pointer items-center gap-2.5 rounded-full px-4 py-2 text-left transition-all duration-200 ${
+                  isActive
+                    ? "scale-[1.02] bg-ink text-mist shadow-md ring-2 ring-husk/70"
+                    : "border border-bark/15 bg-white/80 text-ink/75 shadow-xs hover:border-husk/50 hover:bg-white hover:text-ink"
+                }`}
+              >
+                <span
+                  className={`flex h-5.5 w-5.5 items-center justify-center rounded-full text-xs transition-colors ${
+                    isActive ? "bg-husk text-ink" : "bg-bark/8 text-husk group-hover:bg-husk/20"
+                  }`}
+                >
+                  {ROOM_ICONS[room.slug]}
+                </span>
+                <span className="font-display text-[13px] font-semibold">{room.name}</span>
+                <span
+                  className={`rounded-full px-2 py-0.5 font-body text-[11px] font-medium transition-colors ${
+                    isActive ? "bg-husk/25 text-husk" : "bg-bark/6 text-ink/60"
+                  }`}
+                >
+                  ₹{price.toLocaleString("en-IN")}{room.unit}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
         <div
           data-reveal
           ref={gridRef}
-          className="relative mt-16 grid gap-8 md:grid-cols-[1.15fr_0.85fr] md:gap-4"
+          className="relative mt-12 grid gap-8 md:grid-cols-[1.15fr_0.85fr] md:gap-4"
         >
           {/* Pin-to-card connector, desktop only */}
           <svg
@@ -361,8 +424,10 @@ export default function RoomsOverview() {
             />
           </svg>
 
-          {/* The map */}
-          <div className="relative aspect-5/4 overflow-hidden rounded-[26px] border border-bark/10 bg-white/40 shadow-[0_20px_50px_rgba(30,42,29,0.1)] sm:aspect-16/11">
+          {/* The interactive estate map */}
+          <div className="relative aspect-5/4 overflow-hidden rounded-[26px] border border-bark/15 bg-white/50 shadow-[0_20px_50px_rgba(30,42,29,0.1)] backdrop-blur-xs sm:aspect-16/11">
+
+            {/* Vector Footpath Trail */}
             <svg
               className="absolute inset-0 h-full w-full"
               viewBox="0 0 100 100"
@@ -374,15 +439,17 @@ export default function RoomsOverview() {
                 d={TRAIL_PATH}
                 fill="none"
                 stroke="#8a6d3a"
-                strokeWidth="0.5"
-                opacity="0.55"
+                strokeWidth="0.55"
+                opacity="0.65"
                 vectorEffect="non-scaling-stroke"
               />
             </svg>
 
+            {/* Rich Interactive Accommodation Pins */}
             {ROOM_TYPES.map((room) => {
               const m = MAP_META[room.slug];
               const isActive = room.slug === activeSlug;
+              const roomPrice = rateMode === "weekend" ? room.weekendPrice : weekdayPrice(room);
               return (
                 <button
                   key={room.slug}
@@ -392,38 +459,66 @@ export default function RoomsOverview() {
                   onClick={() => setActiveSlug(room.slug)}
                   aria-pressed={isActive}
                   aria-label={`Show ${room.name}`}
-                  className="group cursor-pointer absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5"
+                  className={`group cursor-pointer absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${
+                    isActive ? "z-30 scale-105" : "z-20 hover:scale-105 hover:z-25"
+                  }`}
                   style={{ top: `${m.top}%`, left: `${m.left}%` }}
                 >
-                  <span className="relative flex h-4 w-4 items-center justify-center">
-                    {isActive && (
-                      <span className="rm-pin-ring absolute h-4 w-4 rounded-full bg-husk/60" />
-                    )}
-                    <span
-                      className="relative h-2.5 w-2.5 rounded-full border transition-all duration-300"
-                      style={{
-                        background: isActive ? "#c9a05c" : "rgba(30,42,29,0.35)",
-                        borderColor: isActive ? "#c9a05c" : "rgba(30,42,29,0.4)",
-                        transform: isActive ? "scale(1.3)" : "scale(1)",
-                      }}
-                    />
-                  </span>
-                  <span
-                    className="whitespace-nowrap rounded-full px-2 py-0.5 font-display text-[11px] font-medium transition-colors"
-                    style={{
-                      color: isActive ? "#1e2a1d" : "rgba(30,42,29,0.5)",
-                      background: isActive ? "rgba(201,160,92,0.28)" : "transparent",
-                    }}
+                  <div
+                    className={`flex items-center gap-2 rounded-full px-3 py-1.5 backdrop-blur-sm transition-all duration-300 ${
+                      isActive
+                        ? "bg-ink text-mist ring-2 ring-husk shadow-[0_12px_28px_rgba(201,160,92,0.35)]"
+                        : "border border-bark/20 bg-white/95 text-ink shadow-md hover:border-husk/70 hover:bg-white"
+                    }`}
                   >
-                    {m.place}
-                  </span>
+                    {/* Room indicator icon with active locator ring */}
+                    <div className="relative flex h-5 w-5 shrink-0 items-center justify-center rounded-full">
+                      {isActive && (
+                        <span className="rm-pin-ring absolute h-5 w-5 rounded-full bg-husk/50" />
+                      )}
+                      <span
+                        className={`flex h-5 w-5 items-center justify-center rounded-full text-xs transition-colors ${
+                          isActive ? "bg-husk text-ink" : "bg-bark/8 text-husk group-hover:bg-husk/20"
+                        }`}
+                      >
+                        {ROOM_ICONS[room.slug]}
+                      </span>
+                    </div>
+
+                    {/* Room Details & Pricing badge */}
+                    <div className="text-left whitespace-nowrap pr-0.5">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-display text-[11px] font-semibold tracking-tight sm:text-[12px]">
+                          {room.name}
+                        </span>
+                        {isActive && (
+                          <span className="h-1.5 w-1.5 rounded-full bg-husk animate-pulse" />
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1 font-body text-[9.5px] leading-none opacity-80 sm:text-[10px]">
+                        <span>{m.place}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Pointer Pin Needle */}
+                  <div
+                    className={`mx-auto h-2 w-0.5 transition-colors ${
+                      isActive ? "bg-husk" : "bg-bark/30 group-hover:bg-husk"
+                    }`}
+                  />
+                  <div
+                    className={`mx-auto h-1.5 w-1.5 rounded-full transition-colors ${
+                      isActive ? "bg-husk ring-2 ring-white" : "bg-bark/40 group-hover:bg-husk"
+                    }`}
+                  />
                 </button>
               );
             })}
           </div>
 
           {/* Field note card */}
-          <div className="relative z-10 flex flex-col rounded-[22px] border border-bark/10 bg-white/80 p-6 shadow-[0_20px_50px_rgba(30,42,29,0.1)] backdrop-blur-sm sm:p-7">
+          <div className="relative z-10 flex flex-col rounded-[22px] border border-bark/10 bg-white/80 p-6  backdrop-blur-sm sm:p-7">
             <span ref={cardAnchorRef} className="absolute -left-1.5 top-8 h-3 w-3 rounded-full bg-husk" aria-hidden="true" />
 
             <p className="font-body text-[11px] text-ink/45">{activeRoom.tag}</p>
@@ -431,7 +526,7 @@ export default function RoomsOverview() {
             <p className="font-body text-[13px] text-husk">{activeRoom.name}</p>
 
             <div
-              className="relative mt-5 aspect-4/3 w-[62%] self-start overflow-hidden rounded-lg shadow-[0_14px_30px_rgba(30,42,29,0.22)]"
+              className="relative mt-5 aspect-4/3 w-[62%] self-start overflow-hidden rounded-lg "
               style={{ transform: "rotate(-1.5deg)" }}
             >
               <span className="rm-tape" aria-hidden="true" />

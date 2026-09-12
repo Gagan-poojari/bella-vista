@@ -207,11 +207,9 @@ export default function BeyondEstate() {
         .be-stop[data-locked="true"] { opacity: 0.42; filter: grayscale(0.85); transform: scale(0.97); }
         .be-stop[data-locked="false"] {
           opacity: 1; filter: grayscale(0); transform: scale(1);
-          box-shadow: 0 16px 36px rgba(30,42,29,0.18), 0 0 0 1px rgba(201,160,92,0.35);
         }
         .be-stop[data-locked="false"]:hover {
           transform: translateY(-6px) scale(1.02);
-          box-shadow: 0 24px 46px rgba(30,42,29,0.24), 0 0 0 1.5px rgba(201,160,92,0.7);
         }
         @media (prefers-reduced-motion: reduce) { .be-stop { transition: none; } }
 
@@ -247,7 +245,7 @@ export default function BeyondEstate() {
         </div>
 
         {/* Time-budget interactive slider */}
-        <div className="mt-14 rounded-3xl border border-bark/15 bg-white/75 p-6 shadow-[0_22px_50px_rgba(30,42,29,0.08)] backdrop-blur-md sm:p-8">
+        <div className="mt-14 rounded-3xl border border-bark/15 bg-white/75 p-6 backdrop-blur-md sm:p-8">
           <div className="flex flex-wrap items-baseline justify-between gap-3">
             <div>
               <span className="font-body text-[11px] font-semibold uppercase tracking-[0.2em] text-husk">
@@ -299,8 +297,8 @@ export default function BeyondEstate() {
             <div className="flex flex-wrap gap-2">
               {[
                 { label: "On Grounds", val: 0 },
-                { label: "Quick Detour (≤25m)", val: 25 },
-                { label: "Half Day (≤45m)", val: 45 },
+                { label: "Quick Detour (about 25m)", val: 25 },
+                { label: "Half Day (about 45m)", val: 45 },
                 { label: "Peak & Temples (90m)", val: 90 },
               ].map((preset) => (
                 <button
