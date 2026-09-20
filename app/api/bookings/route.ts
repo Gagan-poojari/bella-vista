@@ -6,10 +6,12 @@ import Booking from '@/models/Booking';
 import Room from '@/models/Room';
 import Razorpay from 'razorpay';
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID as string,
-  key_secret: process.env.RAZORPAY_KEY_SECRET as string,
-});
+function getRazorpay() {
+  return new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID || 'dummy_key',
+    key_secret: process.env.RAZORPAY_KEY_SECRET || 'dummy_secret',
+  });
+}
 
 export async function GET(req: Request) {
   try {
@@ -141,6 +143,7 @@ export async function POST(req: Request) {
       receipt: `receipt_${Date.now()}`
     };
 
+    const razorpay = getRazorpay();
     const order = await razorpay.orders.create(options);
 
     // Create the booking

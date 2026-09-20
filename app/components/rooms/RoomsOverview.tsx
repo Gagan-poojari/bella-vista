@@ -274,8 +274,6 @@ export default function RoomsOverview() {
     };
   }, [recomputeLine]);
 
-  const savingsPct = activeRoom.weekdayDiscountPct;
-
   return (
     <section id="rooms" ref={sectionRef} className="relative overflow-hidden bg-mist py-24 sm:py-32">
       <style>{`

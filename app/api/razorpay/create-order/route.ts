@@ -3,13 +3,16 @@ import Razorpay from 'razorpay';
 import dbConnect from '@/lib/mongodb';
 import Room from '@/models/Room';
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID as string,
-  key_secret: process.env.RAZORPAY_KEY_SECRET as string,
-});
+function getRazorpay() {
+  return new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID || 'dummy_key',
+    key_secret: process.env.RAZORPAY_KEY_SECRET || 'dummy_secret',
+  });
+}
 
 export async function POST(req: Request) {
   try {
+    const razorpay = getRazorpay();
     await dbConnect();
     const body = await req.json();
     const { roomId, checkInDate, checkOutDate } = body;

@@ -239,7 +239,7 @@ export default function BookingTicket({ room }: { room: TicketRoom }) {
           </div>
           <h3 className="font-display text-2xl font-semibold text-ink mb-2">Booking Confirmed!</h3>
           <p className="font-body text-[13px] text-ink/70 leading-relaxed">
-            Your stay is sealed. We've sent a confirmation email with all the details.
+            Your stay is sealed. We&apos;ve sent a confirmation email with all the details.
           </p>
         </div>
       ) : (
