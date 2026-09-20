@@ -29,6 +29,8 @@ export const metadata: Metadata = {
   }
 };
 
+import { Toaster } from "sonner";
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -37,6 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col bg-ink font-body">
         {children}
+        <Toaster richColors position="bottom-right" />
       </body>
     </html>
   );

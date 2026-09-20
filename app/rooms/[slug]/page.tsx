@@ -103,10 +103,22 @@ const ICONS: Record<AmenityIcon, ReactNode> = {
   ),
 };
 
+import dbConnect from "@/lib/mongodb";
+import RoomModel from "@/models/Room";
+
 export default async function RoomDetailPage({ params }: PageProps<"/rooms/[slug]">) {
   const { slug } = await params;
   const room = getRoomBySlug(slug);
   if (!room) notFound();
+
+  await dbConnect();
+  // Fetch dynamic room data from MongoDB to get uploaded images
+  const roomDb = await RoomModel.findOne({ name: room.name }).lean();
+  
+  // Use DB images if available, otherwise fallback to static gallery
+  const galleryImages = roomDb?.images && roomDb.images.length > 0 
+    ? roomDb.images 
+    : room.gallery;
 
   const placeName = PLACE_NAMES[room.slug];
 
@@ -148,7 +160,7 @@ export default async function RoomDetailPage({ params }: PageProps<"/rooms/[slug
               <p className="mt-1 font-body text-[12.5px] font-medium text-husk">{room.tag}</p>
 
               <div className="mt-6">
-                <RoomGallery images={room.gallery} name={room.name} comingSoon={room.comingSoon} />
+                <RoomGallery images={galleryImages} name={room.name} comingSoon={room.comingSoon} />
               </div>
 
               <p className="mt-8 max-w-2xl font-body text-[15px] leading-relaxed text-ink/70">
@@ -174,6 +186,9 @@ export default async function RoomDetailPage({ params }: PageProps<"/rooms/[slug
             <aside className="h-fit lg:sticky lg:top-28">
               <BookingTicket
                 room={{
+                  id: roomDb?._id?.toString() || "",
+                  maxGuests: roomDb?.maxGuests || 2,
+                  name: room.name,
                   weekendPrice: room.weekendPrice,
                   weekdayPrice: weekdayPrice(room),
                   weekdayDiscountPct: room.weekdayDiscountPct,

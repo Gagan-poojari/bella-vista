@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 function pad(n: number) {
   return String(n).padStart(2, "0");
@@ -61,6 +62,20 @@ export default function BookingBar() {
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
   const guestsRef = useRef<HTMLDivElement>(null);
   const datesRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+
+  const handleSearch = () => {
+    if (checkIn && checkOut) {
+      const params = new URLSearchParams({
+        checkIn,
+        checkOut,
+        adults: adults.toString(),
+        children: children.toString(),
+      });
+      setMobileSheetOpen(false);
+      router.push(`/search?${params.toString()}`);
+    }
+  };
 
   useEffect(() => {
     if (!guestsOpen && !datesOpen) return;
@@ -244,7 +259,7 @@ export default function BookingBar() {
             </div>
           </div>
 
-          <SearchButton disabled={!canSearch} className="rounded-sm" />
+          <SearchButton disabled={!canSearch} className="rounded-sm" onClick={handleSearch} />
         </div>
 
         {checkIn ? (
@@ -354,7 +369,7 @@ export default function BookingBar() {
             <SearchButton
               disabled={!canSearch}
               className="mt-1 w-full rounded-2xl py-4"
-              onClick={() => setMobileSheetOpen(false)}
+              onClick={handleSearch}
             />
           </div>
         </div>

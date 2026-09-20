@@ -185,7 +185,6 @@ export default function RoomsOverview() {
   const pinRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   const [activeSlug, setActiveSlug] = useState(ROOM_TYPES[0].slug);
-  const [rateMode, setRateMode] = useState<"weekend" | "weekday">("weekend");
   const [reduceMotion, setReduceMotion] = useState(false);
   const [linePath, setLinePath] = useState("");
   const [lineVisible, setLineVisible] = useState(false);
@@ -193,8 +192,7 @@ export default function RoomsOverview() {
   const activeRoom = ROOM_TYPES.find((r) => r.slug === activeSlug)!;
   const meta = MAP_META[activeSlug];
 
-  const targetPrice =
-    rateMode === "weekend" ? activeRoom.weekendPrice : weekdayPrice(activeRoom);
+  const targetPrice = activeRoom.weekendPrice;
   const displayPrice = useCountUp(targetPrice, 550, !reduceMotion);
 
   useEffect(() => {
@@ -370,7 +368,7 @@ export default function RoomsOverview() {
           </span>
           {ROOM_TYPES.map((room) => {
             const isActive = room.slug === activeSlug;
-            const price = rateMode === "weekend" ? room.weekendPrice : weekdayPrice(room);
+            const price = room.weekendPrice;
             return (
               <button
                 key={room.slug}
@@ -449,7 +447,7 @@ export default function RoomsOverview() {
             {ROOM_TYPES.map((room) => {
               const m = MAP_META[room.slug];
               const isActive = room.slug === activeSlug;
-              const roomPrice = rateMode === "weekend" ? room.weekendPrice : weekdayPrice(room);
+              const roomPrice = room.weekendPrice;
               return (
                 <button
                   key={room.slug}
@@ -553,27 +551,7 @@ export default function RoomsOverview() {
                 ₹{displayPrice.toLocaleString("en-IN")}
                 <span className="ml-1 font-body text-[12px] font-normal text-ink/50">{activeRoom.unit}</span>
               </p>
-
-              <div className="relative ml-auto flex rounded-full border border-bark/15 bg-bark/4 p-0.5">
-                <span
-                  className="rm-toggle-thumb absolute inset-y-0.5 w-14.5 rounded-full bg-white shadow-sm"
-                  style={{ transform: rateMode === "weekend" ? "translateX(0)" : "translateX(58px)" }}
-                />
-                {(["weekend", "weekday"] as const).map((mode) => (
-                  <button
-                    key={mode}
-                    onClick={() => setRateMode(mode)}
-                    className="relative z-10 w-14.5 rounded-full py-1.5 font-body text-[10.5px] font-medium capitalize text-ink/70"
-                  >
-                    {mode}
-                  </button>
-                ))}
-              </div>
             </div>
-
-            {rateMode === "weekday" && (
-              <p className="mt-2 font-body text-[11.5px] text-sage">{savingsPct}% off, Monday–Thursday.</p>
-            )}
 
             <Link
               href={`/rooms/${activeRoom.slug}`}
