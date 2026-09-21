@@ -1,4 +1,5 @@
 import mongoose, { Schema, models, Document } from 'mongoose';
+import './Room';
 
 export interface IBooking extends Document {
   customerName: string;

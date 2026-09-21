@@ -1,5 +1,6 @@
 import dbConnect from "@/lib/mongodb";
 import Booking from "@/models/Booking";
+import "@/models/Room";
 import BookingsTable from "./BookingsTable";
 
 export default async function BookingsPage() {
@@ -14,19 +15,8 @@ export default async function BookingsPage() {
   const upcomingBookings = bookings.filter((b: any) => new Date(b.checkOutDate) >= now);
   const finishedBookings = bookings.filter((b: any) => new Date(b.checkOutDate) < now);
 
-  const serializeBookings = (list: any[]) => 
-    list.map(b => ({
-      ...b,
-      _id: b._id.toString(),
-      room: b.room ? { ...b.room, _id: b.room._id.toString() } : null,
-      createdAt: b.createdAt ? b.createdAt.toISOString() : null,
-      updatedAt: b.updatedAt ? b.updatedAt.toISOString() : null,
-      checkInDate: b.checkInDate ? b.checkInDate.toISOString() : null,
-      checkOutDate: b.checkOutDate ? b.checkOutDate.toISOString() : null,
-    }));
-
-  const safeUpcoming = serializeBookings(upcomingBookings);
-  const safeFinished = serializeBookings(finishedBookings);
+  const safeUpcoming = JSON.parse(JSON.stringify(upcomingBookings));
+  const safeFinished = JSON.parse(JSON.stringify(finishedBookings));
 
   return (
     <div className="space-y-10">
