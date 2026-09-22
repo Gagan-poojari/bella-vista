@@ -105,6 +105,7 @@ const ICONS: Record<AmenityIcon, ReactNode> = {
 
 import dbConnect from "@/lib/mongodb";
 import RoomModel from "@/models/Room";
+import ImageKit from "imagekit";
 
 export default async function RoomDetailPage({ params }: PageProps<"/rooms/[slug]">) {
   const { slug } = await params;
@@ -116,9 +117,32 @@ export default async function RoomDetailPage({ params }: PageProps<"/rooms/[slug
   const roomDb = await RoomModel.findOne({ name: room.name }).lean();
   
   // Use DB images if available, otherwise fallback to static gallery
-  const galleryImages = roomDb?.images && roomDb.images.length > 0 
+  let galleryImages = roomDb?.images && roomDb.images.length > 0 
     ? roomDb.images 
     : room.gallery;
+
+  // Attempt to fetch directly from ImageKit folder to stay in sync with the Admin panel
+  try {
+    let folderName = `/rooms/${roomDb?._id}`;
+    const lowerName = room.name?.toLowerCase() || '';
+    if (lowerName.includes('1 bhk') || lowerName.includes('1bhk')) folderName = '/1bhk';
+    else if (lowerName.includes('2 bhk') || lowerName.includes('2bhk')) folderName = '/2bhk';
+    else if (lowerName.includes('dormitory')) folderName = '/Dormitory';
+
+    if (process.env.IMAGEKIT_PRIVATE_KEY) {
+      const imagekit = new ImageKit({
+        publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || "dummy",
+        privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+        urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT || "https://ik.imagekit.io/dummy",
+      });
+      const files = await imagekit.listFiles({ path: folderName });
+      if (files && files.length > 0) {
+        galleryImages = files.map((f: any) => f.url);
+      }
+    }
+  } catch (err) {
+    console.error("Failed to fetch ImageKit files for room details page", err);
+  }
 
   const placeName = PLACE_NAMES[room.slug];
 

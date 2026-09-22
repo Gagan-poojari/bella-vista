@@ -6,7 +6,7 @@ import { ROOM_TYPES } from "../../lib/rooms";
 
 const EXPLORE_LINKS = [
   { label: "About Us", href: "/about" },
-  { label: "Things to Do", href: "/things-to-do" },
+  { label: "Things to Do", href: "/#beyond" },
   { label: "Chikkamagaluru Travel Guide", href: "/travel-guide" },
   { label: "Local Flavors", href: "/local-flavors" },
 ];

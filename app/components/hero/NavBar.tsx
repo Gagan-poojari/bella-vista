@@ -5,9 +5,9 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 const NAV_LINKS = [
-  { label: "Rooms", href: "/rooms" },
-  { label: "Amenities", href: "/amenities" },
-  { label: "Things to Do", href: "/things-to-do" },
+  { label: "Rooms", href: "/#rooms" },
+  { label: "Amenities", href: "/#amenities" },
+  { label: "Things to Do", href: "/#beyond" },
 ];
 
 // The reserved anchor's fully-docked size (icon + gap + wordmark), and the

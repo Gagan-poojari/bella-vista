@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Spinner } from "@/app/components/ui/Spinner";
 import ImageUploader from "./ImageUploader";
@@ -15,6 +15,66 @@ export default function RoomManager({ room }: { room: any }) {
     room.blockedDates.map((d: string) => new Date(d))
   );
   const [dynamicPricingList, setDynamicPricingList] = useState<any[]>(room.dynamicPricing);
+  const [imagesList, setImagesList] = useState<{url: string, fileId: string}[]>([]);
+  const [isLoadingImages, setIsLoadingImages] = useState(true);
+
+  let folderName = `/rooms/${room._id}`;
+  const lowerName = room.name?.toLowerCase() || '';
+  if (lowerName.includes('1 bhk') || lowerName.includes('1bhk')) folderName = '/1bhk';
+  else if (lowerName.includes('2 bhk') || lowerName.includes('2bhk')) folderName = '/2bhk';
+  else if (lowerName.includes('dormitory')) folderName = '/Dormitory';
+
+  useEffect(() => {
+    fetch(`/api/imagekit/files?folder=${folderName}`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setImagesList(data.map(f => ({ url: f.url, fileId: f.fileId })));
+        }
+        setIsLoadingImages(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setIsLoadingImages(false);
+      });
+  }, [folderName]);
+
+  const handleUploadSuccess = () => {
+    // Refetch to get the latest files with their IDs
+    fetch(`/api/imagekit/files?folder=${folderName}`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setImagesList(data.map(f => ({ url: f.url, fileId: f.fileId })));
+        }
+      });
+  };
+
+  const handleRemoveImage = async (fileId: string) => {
+    const previousImages = [...imagesList];
+    setImagesList(imagesList.filter(img => img.fileId !== fileId));
+    
+    try {
+      const res = await fetch('/api/imagekit/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fileId })
+      });
+      if (!res.ok) throw new Error("Failed to delete from ImageKit");
+      toast.success("Media deleted from ImageKit");
+      
+      // We also should update the db so it doesn't hold old references
+      const newUrls = imagesList.filter(img => img.fileId !== fileId).map(img => img.url);
+      await fetch(`/api/rooms/${room._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ images: newUrls }),
+      });
+    } catch(err: any) {
+      toast.error(err.message);
+      setImagesList(previousImages); // Revert on failure
+    }
+  };
 
   const saveRoomData = async (updates: any) => {
     setIsSaving(true);
@@ -166,10 +226,45 @@ export default function RoomManager({ room }: { room: any }) {
 
         {/* Gallery */}
         <div>
-          <h3 className="font-semibold text-ink text-sm uppercase tracking-wider mb-3">Image Gallery</h3>
-          <div className="bg-mist p-6 rounded-2xl border border-bark/10">
-            <p className="text-[12px] text-ink/60 mb-4">{room.images?.length || 0} images uploaded</p>
-            <ImageUploader roomId={room._id.toString()} />
+          <h3 className="font-semibold text-ink text-sm uppercase tracking-wider mb-3">Media Gallery</h3>
+          <div className="bg-mist p-6 rounded-2xl border border-bark/10 space-y-6">
+            <div>
+              {isLoadingImages ? (
+                <p className="text-[12px] text-ink/60 mb-4">Loading media from ImageKit...</p>
+              ) : (
+                <p className="text-[12px] text-ink/60 mb-4">{imagesList.length} items found in folder {folderName}</p>
+              )}
+              
+              {!isLoadingImages && imagesList.length > 0 && (
+                <div className="grid grid-cols-3 gap-3 mb-6">
+                  {imagesList.map((media, i) => {
+                    const isVideo = media.url.match(/\.(mp4|webm|ogg|mov)$/i);
+                    return (
+                      <div key={media.fileId} className="relative group aspect-square rounded-lg overflow-hidden bg-bark/10">
+                        {isVideo ? (
+                          <video src={media.url} className="w-full h-full object-cover" muted playsInline />
+                        ) : (
+                          <img src={media.url} alt={`Media ${i}`} className="w-full h-full object-cover" />
+                        )}
+                        <button 
+                          onClick={() => handleRemoveImage(media.fileId)}
+                          className="absolute inset-0 bg-ink/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <span className="bg-white text-red-600 p-2 rounded-full shadow-sm hover:scale-110 transition-transform">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </span>
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            <div className="border-t border-bark/10 pt-6">
+              <ImageUploader roomId={room._id.toString()} onUploadSuccess={handleUploadSuccess} />
+            </div>
           </div>
         </div>
       </div>

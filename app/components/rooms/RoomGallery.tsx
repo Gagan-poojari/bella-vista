@@ -14,6 +14,8 @@ export default function RoomGallery({
 }) {
   const [active, setActive] = useState(0);
 
+  const isVideo = (url?: string) => url?.match(/\.(mp4|webm|ogg|mov)$/i);
+
   return (
     <div>
       <style>{`
@@ -24,15 +26,26 @@ export default function RoomGallery({
 
       <div className="relative aspect-4/3 w-full overflow-hidden rounded-3xl bg-bark shadow-[0_20px_50px_rgba(30,42,29,0.18)]">
         <div key={active} className="rg-main absolute inset-0">
-          <SafeImage
-            src={images[active]}
-            alt={`${name} photo ${active + 1}`}
-            fill
-            priority={active === 0}
-            sizes="(min-width: 1024px) 60vw, 100vw"
-            className="h-full w-full object-cover"
-            fallbackLabel={comingSoon ? "Photos coming soon" : undefined}
-          />
+          {isVideo(images[active]) ? (
+            <video
+              src={images[active]}
+              className="h-full w-full object-cover"
+              controls
+              playsInline
+              autoPlay
+              muted
+            />
+          ) : (
+            <SafeImage
+              src={images[active]}
+              alt={`${name} photo ${active + 1}`}
+              fill
+              priority={active === 0}
+              sizes="(min-width: 1024px) 60vw, 100vw"
+              className="h-full w-full object-cover"
+              fallbackLabel={comingSoon ? "Photos coming soon" : undefined}
+            />
+          )}
         </div>
       </div>
 
@@ -50,14 +63,18 @@ export default function RoomGallery({
                 opacity: i === active ? 1 : 0.7,
               }}
             >
-              <SafeImage
-                src={src}
-                alt={`${name} thumbnail ${i + 1}`}
-                fill
-                sizes="140px"
-                className="h-full w-full object-cover"
-                fallbackLabel=""
-              />
+              {isVideo(src) ? (
+                <video src={src} className="h-full w-full object-cover" muted playsInline />
+              ) : (
+                <SafeImage
+                  src={src}
+                  alt={`${name} thumbnail ${i + 1}`}
+                  fill
+                  sizes="140px"
+                  className="h-full w-full object-cover"
+                  fallbackLabel=""
+                />
+              )}
             </button>
           ))}
         </div>

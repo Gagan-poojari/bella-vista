@@ -20,29 +20,44 @@ export default function ImageUploader({ roomId, onUploadSuccess }: ImageUploader
       setUploading(true);
       setError(null);
 
-      // 1. Compress Image
-      const options = {
-        maxSizeMB: 1,
-        maxWidthOrHeight: 1920,
-        useWebWorker: true,
-      };
-      
-      const compressedFile = await imageCompression(file, options);
+      // 1. Fetch Room Details for Folder Mapping
+      const roomRes = await fetch(`/api/rooms/${roomId}`);
+      if (!roomRes.ok) throw new Error('Failed to fetch room');
+      const room = await roomRes.json();
 
-      // 2. Fetch Auth Parameters
+      let folderName = `/rooms/${roomId}`;
+      const lowerName = room.name?.toLowerCase() || '';
+      if (lowerName.includes('1 bhk') || lowerName.includes('1bhk')) folderName = '/1bhk';
+      else if (lowerName.includes('2 bhk') || lowerName.includes('2bhk')) folderName = '/2bhk';
+      else if (lowerName.includes('dormitory')) folderName = '/Dormitory';
+
+      // 2. Compress Image (Skip for videos)
+      const isVideo = file.type.startsWith('video/');
+      let processedFile: File | Blob = file;
+
+      if (!isVideo) {
+        const options = {
+          maxSizeMB: 1,
+          maxWidthOrHeight: 1920,
+          useWebWorker: true,
+        };
+        processedFile = await imageCompression(file, options);
+      }
+
+      // 3. Fetch Auth Parameters
       const authRes = await fetch('/api/imagekit/auth');
       if (!authRes.ok) throw new Error('Failed to get ImageKit auth params');
       const authData = await authRes.json();
 
-      // 3. Upload to ImageKit
+      // 4. Upload to ImageKit
       const formData = new FormData();
-      formData.append('file', compressedFile);
-      formData.append('fileName', compressedFile.name);
+      formData.append('file', processedFile);
+      formData.append('fileName', processedFile instanceof File ? processedFile.name : file.name);
       formData.append('publicKey', process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || '');
       formData.append('signature', authData.signature);
       formData.append('expire', authData.expire.toString());
       formData.append('token', authData.token);
-      formData.append('folder', `/rooms/${roomId}`);
+      formData.append('folder', folderName);
 
       const uploadRes = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
         method: 'POST',
@@ -50,18 +65,13 @@ export default function ImageUploader({ roomId, onUploadSuccess }: ImageUploader
       });
 
       if (!uploadRes.ok) {
-        throw new Error('Failed to upload image to ImageKit');
+        throw new Error('Failed to upload media to ImageKit');
       }
 
       const uploadData = await uploadRes.json();
       const imageUrl = uploadData.url;
 
-      // 4. Update the Room in MongoDB
-      // First, get the current room to append the image
-      const roomRes = await fetch(`/api/rooms/${roomId}`);
-      if (!roomRes.ok) throw new Error('Failed to fetch room');
-      const room = await roomRes.json();
-
+      // 5. Update the Room in MongoDB
       const newImages = [...(room.images || []), imageUrl];
 
       const updateRes = await fetch(`/api/rooms/${roomId}`, {
@@ -88,12 +98,12 @@ export default function ImageUploader({ roomId, onUploadSuccess }: ImageUploader
 
   return (
     <div className="p-4 border border-bark/20 rounded-lg bg-mist/50">
-      <h3 className="text-lg font-semibold text-ink mb-2">Upload Room Image</h3>
-      <p className="text-sm text-ink/70 mb-4">Images will be compressed and added to the room gallery.</p>
+      <h3 className="text-lg font-semibold text-ink mb-2">Upload Room Media</h3>
+      <p className="text-sm text-ink/70 mb-4">Upload images or videos for the room gallery.</p>
       
       <input 
         type="file" 
-        accept="image/*" 
+        accept="image/*,video/*" 
         onChange={handleFileChange} 
         disabled={uploading}
         className="block w-full text-sm text-slate-500
@@ -104,7 +114,7 @@ export default function ImageUploader({ roomId, onUploadSuccess }: ImageUploader
           hover:file:bg-husk/20"
       />
       
-      {uploading && <p className="mt-2 text-sm text-blue-600">Compressing and uploading...</p>}
+      {uploading && <p className="mt-2 text-sm text-blue-600">Uploading...</p>}
       {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
     </div>
   );
